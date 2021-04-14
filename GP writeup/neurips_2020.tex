@@ -74,7 +74,7 @@ Gaussian processes emerged in machine learning as a powerful tool for regression
 \end{abstract}
 
 \section{Gaussian Random Variables}
-A random variable is a function that maps from an event space to a measurable space. The event space represents a set of all possible outcomes that the random variable may take, and the measurable space is a probability measure between 0 and 1 (inclusive). We say that a random variable $X$ is normally distributed if the event space has a probability distribution that behaves like a Gaussian, fully characterized by two parameters: a mean $\mu$ and variance $\sigma^2$:
+A random variable is a function that maps from an event space to a measurable space. The event space represents a set of all possible outcomes that the random variable may take, and the measurable space is a probability measure between 0 and 1 (inclusive). We say that a random variable $X$ is normally distributed if the event space has a Gaussian probability distribution, fully characterized by two parameters: a mean $\mu$ and variance $\sigma^2$:
 
 \[X\sim \mathcal{N}(\mu,\sigma^2).\]
 
@@ -90,10 +90,17 @@ where $\boldsymbol{\mu}$ is the mean vector, and $\Sigma$ is the covariance matr
 \section{Gaussian Process}
 A random process is essentially a collection of random variables jointly characterized  as a set or vector of random variables with a multivariate joint probability distribution. A Gaussian process $f(\boldsymbol{x})$ is defined as a a random process where each set of random variable in the random process is has a multivariate Gaussian distribution. $f(\boldsymbol{x})$ is fully characterized by a mean function  $m(\boldsymbol{x})$ and covariance function, or kernel $K(\boldsymbol{x},\boldsymbol{x'})$:
 \[f(\boldsymbol{x})\sim\mathcal{GP}(m(\boldsymbol{x}),K(\boldsymbol{x},\boldsymbol{x'}))\]
+
+Typically, the mean function is zero. The kernel is chosen based on some prior belief about the dataset; more on kernels is discussed in \ref{subsection:kernels}.
+
 \section{Regression}
-
+Suppose we observe training data $\boldsymbol{t}$ and choose covariance function $\kappa$. Then the mean function is given by
+\[m(\boldsymbol{x})=C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}\boldsymbol{t}\]
+\[K(\boldsymbol{x},\boldsymbol{x'})=C_{\boldsymbol{x}\boldsymbol{x'}}-C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}C_{\boldsymbol{x}\boldsymbol{t}}\]
+where $C_{\boldsymbol{x}\boldsymbol{t}} = \kappa(\boldsymbol{x},\boldsymbol{t})$, $C_{\boldsymbol{t}} = \kappa(\boldsymbol{t},\boldsymbol{t})$, and $C_{\boldsymbol{x}\boldsymbol{x'}} = \kappa(\boldsymbol{x},\boldsymbol{x'})$.
+Those interested in the derivation of the results are encouraged to consult section 6.4.2 of [1].
 \subsection{Kernels}
-
+\label{subsection:kernels}
 
 \section*{References}
 
@@ -106,17 +113,6 @@ when listing the references.
 
 \small
 
-[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms for
-connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and T.K.\ Leen
-(eds.), {\it Advances in Neural Information Processing Systems 7},
-pp.\ 609--616. Cambridge, MA: MIT Press.
-
-[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS: Exploring
-  Realistic Neural Models with the GEneral NEural SImulation System.}  New York:
-TELOS/Springer--Verlag.
-
-[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of learning and
-recall at excitatory recurrent synapses and cholinergic modulation in rat
-hippocampal region CA3. {\it Journal of Neuroscience} {\bf 15}(7):5249-5262.
+[1] C. M. Bishop, Pattern recognition and machine learning. New York: Springer, 2006.
 
 \end{document}
