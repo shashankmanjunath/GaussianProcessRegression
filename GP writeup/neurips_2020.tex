@@ -70,11 +70,16 @@
 \maketitle
 
 \begin{abstract}
-  Gaussian processes emerged in machine learning as a powerful tool for regression and classification that provides interpretability in its predictions through kernel choice and uncertainty quantification. 
+  Gaussian processes emerged in machine learning as a powerful tool for regression and classification that provides interpretability through kernel choice and uncertainty quantification. 
 \end{abstract}
 
 \section{Gaussian Random Variables}
+A random variable is a function that maps from an event space to a measurable space. The event space represents a set of all possible outcomes that the random variable may take, and the measurable space is a probability measure between 0 and 1 (inclusive). We say that a random variable is normally distributed if the event space has a probability distribution that behaves like a Gaussian, fully characterized by two parameters: a mean and variance(edit). 
+
+For a one-dimensional Gaussian random variable, we refer to its distribution as a univariate Gaussian distribution. A set of Gaussian random variables may be characterized jointly as a multivariate Gaussian distribute, with joint probability distribution fully characterized by a mean vector and a covariance matrix.
+
 \section{Gaussian Process}
+Gaussian distributions are mathematically beautiful in that several operations preserve Gaussianity: summation, marginalization, convolution, etc (edit this)
 \section{Regression}
 
 \subsection{Kernels}
