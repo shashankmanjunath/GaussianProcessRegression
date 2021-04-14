@@ -25,7 +25,7 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
-
+\usepackage{amsmath}
 \title{On Gaussian Processes for Regression}
 
 % The \author macro works with any number of authors. There are two commands
@@ -74,12 +74,22 @@ Gaussian processes emerged in machine learning as a powerful tool for regression
 \end{abstract}
 
 \section{Gaussian Random Variables}
-A random variable is a function that maps from an event space to a measurable space. The event space represents a set of all possible outcomes that the random variable may take, and the measurable space is a probability measure between 0 and 1 (inclusive). We say that a random variable is normally distributed if the event space has a probability distribution that behaves like a Gaussian, fully characterized by two parameters: a mean and variance(edit). 
+A random variable is a function that maps from an event space to a measurable space. The event space represents a set of all possible outcomes that the random variable may take, and the measurable space is a probability measure between 0 and 1 (inclusive). We say that a random variable $X$ is normally distributed if the event space has a probability distribution that behaves like a Gaussian, fully characterized by two parameters: a mean $\mu$ and variance $\sigma^2$:
 
-For a one-dimensional Gaussian random variable, we refer to its distribution as a univariate Gaussian distribution. A set of Gaussian random variables may be characterized jointly as a multivariate Gaussian distribute, with joint probability distribution fully characterized by a mean vector and a covariance matrix.
+\[X\sim \mathcal{N}(\mu,\sigma^2).\]
+
+For a one-dimensional Gaussian random variable, we refer to its distribution as a univariate Gaussian distribution. A set of Gaussian random variables may be characterized jointly as a multivariate Gaussian distribution, with joint probability distribution fully characterized by a mean vector and a covariance matrix:
+\[X = \begin{bmatrix}
+           X_{1} \\
+           X_{2} \\
+           \vdots \\
+           X_{n}
+         \end{bmatrix}   \sim \mathcal{N}(\boldsymbol{\mu},\Sigma). \]
+where $\boldsymbol{\mu}$ is the mean vector, and $\Sigma$ is the covariance matrix whose entries describe the covariance between each pair of random variables.
 
 \section{Gaussian Process}
-Gaussian distributions are mathematically elegant in that several operations preserve Gaussianity: summation, marginalization, convolution, etc (edit this)
+A random process is essentially a collection of random variables jointly characterized  as a set or vector of random variables with a multivariate joint probability distribution. A Gaussian processes $\mathcal{GP}$ is defined as a a random process where each set of random variable in the random process is has a multivariate Gaussian distribution. The $\mathcal{GP}$ is fully characterized by a mean function  $m(\boldsymbol{x})$ and covariance function, or kernel $K(\boldsymbol{x},\boldsymbol{x'})$:
+\[f(\boldsymbol{x})=\mathcal{GP}\sim \mathcal{N}(m(\boldsymbol{x}),K(\boldsymbol{x},\boldsymbol{x'}))\]
 \section{Regression}
 
 \subsection{Kernels}
