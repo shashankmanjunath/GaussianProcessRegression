@@ -88,13 +88,13 @@ For a one-dimensional Gaussian random variable, we refer to its distribution as 
 where $\boldsymbol{\mu}$ is the mean vector, and $\Sigma$ is the covariance matrix whose entries describe the covariance between each pair of random variables.
 
 \section{Gaussian Process}
-A random process is essentially a collection of random variables jointly characterized  as a set or vector of random variables with a multivariate joint probability distribution. A Gaussian process $f(\boldsymbol{x})$ is defined as a a random process where each set of random variable in the random process is has a multivariate Gaussian distribution. $f(\boldsymbol{x})$ is fully characterized by a mean function  $m(\boldsymbol{x})$ and covariance function, or kernel $K(\boldsymbol{x},\boldsymbol{x'})$:
+A random process is essentially a collection of random variables jointly characterized  as a set or vector of random variables with a multivariate joint probability distribution. A Gaussian process $f(\boldsymbol{x})$ is defined as a a random process where each set of random variable in the random process is has a multivariate Gaussian distribution. $f(\boldsymbol{x})$ is fully characterized by a mean function  $m(\boldsymbol{x})$ and covariance function, $K(\boldsymbol{x},\boldsymbol{x'})$:
 \[f(\boldsymbol{x})\sim\mathcal{GP}(m(\boldsymbol{x}),K(\boldsymbol{x},\boldsymbol{x'}))\]
 
-Typically, the mean function is zero. The kernel is chosen based on some prior belief about the dataset; more on kernels is discussed in \ref{subsection:kernels}.
+Typically, the mean function is zero. The kernel for the covariance is chosen based on some prior belief about the dataset; more on kernels is discussed in \ref{subsection:kernels}.
 
 \section{Regression}
-Suppose we observe training data $\boldsymbol{t}$ and choose covariance function $\kappa$. Then the mean function is given by
+Suppose we observe training data $\boldsymbol{t}$ and choose kernel $\kappa$. Then the mean and covariance functions are given by
 \[m(\boldsymbol{x})=C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}\boldsymbol{t}\]
 \[K(\boldsymbol{x},\boldsymbol{x'})=C_{\boldsymbol{x}\boldsymbol{x'}}-C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}C_{\boldsymbol{x}\boldsymbol{t}}\]
 where $C_{\boldsymbol{x}\boldsymbol{t}} = \kappa(\boldsymbol{x},\boldsymbol{t})$, $C_{\boldsymbol{t}} = \kappa(\boldsymbol{t},\boldsymbol{t})$, and $C_{\boldsymbol{x}\boldsymbol{x'}} = \kappa(\boldsymbol{x},\boldsymbol{x'})$.
