@@ -88,8 +88,8 @@ For a one-dimensional Gaussian random variable, we refer to its distribution as 
 where $\boldsymbol{\mu}$ is the mean vector, and $\Sigma$ is the covariance matrix whose entries describe the covariance between each pair of random variables.
 
 \section{Gaussian Process}
-A random process is essentially a collection of random variables jointly characterized  as a set or vector of random variables with a multivariate joint probability distribution. A Gaussian processes $\mathcal{GP}$ is defined as a a random process where each set of random variable in the random process is has a multivariate Gaussian distribution. The $\mathcal{GP}$ is fully characterized by a mean function  $m(\boldsymbol{x})$ and covariance function, or kernel $K(\boldsymbol{x},\boldsymbol{x'})$:
-\[f(\boldsymbol{x})=\mathcal{GP}\sim \mathcal{N}(m(\boldsymbol{x}),K(\boldsymbol{x},\boldsymbol{x'}))\]
+A random process is essentially a collection of random variables jointly characterized  as a set or vector of random variables with a multivariate joint probability distribution. A Gaussian process $f(\boldsymbol{x})$ is defined as a a random process where each set of random variable in the random process is has a multivariate Gaussian distribution. $f(\boldsymbol{x})$ is fully characterized by a mean function  $m(\boldsymbol{x})$ and covariance function, or kernel $K(\boldsymbol{x},\boldsymbol{x'})$:
+\[f(\boldsymbol{x})\sim\mathcal{GP}(m(\boldsymbol{x}),K(\boldsymbol{x},\boldsymbol{x'}))\]
 \section{Regression}
 
 \subsection{Kernels}
