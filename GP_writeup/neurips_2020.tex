@@ -9,13 +9,13 @@
 
 % to compile a preprint version, e.g., for submission to arXiv, add add the
 % [preprint] option:
-%     \usepackage[preprint]{neurips_2020}
+    \usepackage[preprint]{neurips_2020}
 
 % to compile a camera-ready version, add the [final] option, e.g.:
-%     \usepackage[final]{neurips_2020}
+    % \usepackage[final]{neurips_2020}
 
 % to avoid loading the natbib package, add option nonatbib:
-     \usepackage[nonatbib]{neurips_2020}
+     % \usepackage[nonatbib]{neurips_2020}
 
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
@@ -25,7 +25,10 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
-\usepackage{amsmath}
+\usepackage{amsmath}        % math notation etc
+
+\bibliographystyle{plain}
+
 \title{On Gaussian Processes for Regression}
 
 % The \author macro works with any number of authors. There are two commands
@@ -37,37 +40,22 @@
 % \AND instead of \And before the third author name.
 
 \author{
-  David S. Hippocampus \\
-  Department of Computer Science\\
-  Cranberry-Lemon University\\
-  Pittsburgh, PA 15213 \\
-  \texttt{hippo@cs.cranberry-lemon.edu} \\
-  % examples of more authors
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \AND
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
+  Jeffrey Alido \\
+  Department of Electrical and Computer Engineering \\
+  Boston University \\
+  \texttt{jalido@bu.edu} \\
+  \And
+  Shashank Manjunath \\
+  Department of Electrical and Computer Engineering \\
+  Boston University \\
+  \texttt{manjuns@bu.edu} \\
 }
 
 \begin{document}
 
 \maketitle
+
+\author
 
 \begin{abstract}
 Gaussian processes emerged in machine learning as a powerful tool for regression and classification that provides interpretability through kernel choice and uncertainty quantification. By leveraging properties of multivariate normal distributions and Bayes’s rule, we may infer a probability distribution over possible functions when fitting a dataset. This Bayesian framework allows flexibility through choosing a covariance function as a prior belief about the dataset, which can provide further insight into the trends of the training data. We implement a multi-dimensional Gaussian process regressor and evaluate its performance on the Boston Housing dataset, which is comparable to those in the top 25 of the Kaggle competition. Furthermore, we perform optimization on the hyperparameters through maximum likelihood estimation, to remove the need for manual tuning of the hyperparameters.
@@ -98,21 +86,19 @@ Suppose we observe training data $\boldsymbol{t}$ and choose kernel $\kappa$. Th
 \[m(\boldsymbol{x})=C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}\boldsymbol{t}\]
 \[K(\boldsymbol{x},\boldsymbol{x'})=C_{\boldsymbol{x}\boldsymbol{x'}}-C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}C_{\boldsymbol{x}\boldsymbol{t}}\]
 where $C_{\boldsymbol{x}\boldsymbol{t}} = \kappa(\boldsymbol{x},\boldsymbol{t})$, $C_{\boldsymbol{t}} = \kappa(\boldsymbol{t},\boldsymbol{t})$, and $C_{\boldsymbol{x}\boldsymbol{x'}} = \kappa(\boldsymbol{x},\boldsymbol{x'})$.
-Those interested in the derivation of the results are encouraged to consult section 6.4.2 of [1].
+Those interested in the derivation of the results are encouraged to consult section 6.4.2 of \cite{bishop_pattern_2006}.
+
 \subsection{Kernels}
+
 \label{subsection:kernels}
 
 \section*{References}
 
-References follow the acknowledgments. Use unnumbered first-level heading for
-the references. Any choice of citation style is acceptable as long as you are
-consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
-when listing the references.
-{\bf Note that the Reference section does not count towards the eight pages of content that are allowed.}
 \medskip
 
 \small
 
-[1] C. M. Bishop, Pattern recognition and machine learning. New York: Springer, 2006.
+% [1] C. M. Bishop, Pattern recognition and machine learning. New York: Springer, 2006.
+\bibliography{gpr}
 
 \end{document}
