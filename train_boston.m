@@ -10,6 +10,7 @@ load('boston_housing_test.mat');
 l = 0.8;
 sigma_f = 1;
 noise = 0;
+
 datanoise = 0;
 p = 1;
 alpha = 1;
