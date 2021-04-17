@@ -1,4 +1,5 @@
 clear; close all; clc;
+addpath("kernels/")
 
 rng(2021);
 

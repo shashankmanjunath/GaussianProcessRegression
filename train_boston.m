@@ -1,11 +1,12 @@
 % Trains GP on boston housing dataset
 
 clear; close all; clc;
+addpath("kernels/")
 rng('default')
 rng(42);
 
-load('boston_housing_train.mat');
-load('boston_housing_test.mat');
+load('./data/boston_housing_train.mat');
+load('./data/boston_housing_test.mat');
 
 l = 0.8;
 sigma_f = 1;

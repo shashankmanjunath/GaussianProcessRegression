@@ -7,3 +7,4 @@ GP_writeup/neurips_2020.fdb_latexmk
 GP_writeup/neurips_2020.fls
 GP_writeup/neurips_2020.out
 *.log
+.DS_Store

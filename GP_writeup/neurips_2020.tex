@@ -26,6 +26,11 @@
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
 \usepackage{amsmath}        % math notation etc
+\usepackage{xcolor}         % to do macro
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\todo}[1]{\textcolor{red}{#1}}
 
 \bibliographystyle{plain}
 
@@ -58,39 +63,116 @@
 \author
 
 \begin{abstract}
-Gaussian processes emerged in machine learning as a powerful tool for regression and classification that provides interpretability through kernel choice and uncertainty quantification. By leveraging properties of multivariate normal distributions and Bayes’s rule, we may infer a probability distribution over possible functions when fitting a dataset. This Bayesian framework allows flexibility through choosing a covariance function as a prior belief about the dataset, which can provide further insight into the trends of the training data. We implement a multi-dimensional Gaussian process regressor and evaluate its performance on the Boston Housing dataset, which is comparable to those in the top 25 of the Kaggle competition. Furthermore, we perform optimization on the hyperparameters through maximum likelihood estimation, to remove the need for manual tuning of the hyperparameters.
+Gaussian processes emerged in machine learning as a powerful tool for regression and classification that provides
+interpretability through kernel choice and uncertainty quantification. By leveraging properties of multivariate normal
+distributions and Bayes’s rule, we may infer a probability distribution over possible functions when fitting a dataset.
+This Bayesian framework allows flexibility through choosing a covariance function as a prior belief about the dataset,
+which can provide further insight into the trends of the training data. We implement a multi-dimensional Gaussian
+process regressor and evaluate its performance on the Boston Housing dataset, which is comparable to those in the top 25
+of the Kaggle competition. Furthermore, we perform optimization on the hyperparameters through maximum likelihood
+estimation, to remove the need for manual tuning of the hyperparameters.
 \end{abstract}
 
 \section{Gaussian Random Variables}
-A random variable is a function that maps from an event space to a measurable space. The event space represents a set of all possible outcomes that the random variable may take, and the measurable space is a probability measure between 0 and 1 (inclusive). We say that a random variable $X$ is normally distributed if the event space has a Gaussian probability distribution, fully characterized by two parameters: a mean $\mu$ and variance $\sigma^2$:
 
-\[X\sim \mathcal{N}(\mu,\sigma^2).\]
+A random variable is a function that maps from an event space to a measurable space. The event space represents a set of
+all possible outcomes that the random variable may take, and the measurable space is a probability measure between 0 and
+1 (inclusive). We say that a random variable $X$ is normally distributed if the event space has a Gaussian probability
+distribution, fully characterized by two parameters: a mean $\mu$ and variance $\sigma^2$:
 
-For a one-dimensional Gaussian random variable, we refer to its distribution as a univariate Gaussian distribution. A set of Gaussian random variables may be characterized jointly as a multivariate Gaussian distribution, with joint probability distribution fully characterized by a mean vector and a covariance matrix:
-\[X = \begin{bmatrix}
+\[
+  X\sim \mathcal{N}(\mu,\sigma^2)
+\]
+
+For a one-dimensional Gaussian random variable, we refer to its distribution as a univariate Gaussian distribution. A
+set of Gaussian random variables may be characterized jointly as a multivariate Gaussian distribution, with joint
+probability distribution fully characterized by a mean vector and a covariance matrix:
+
+\[
+  X = \begin{bmatrix}
            X_{1} \\
            X_{2} \\
            \vdots \\
            X_{n}
-         \end{bmatrix}   \sim \mathcal{N}(\boldsymbol{\mu},\Sigma). \]
-where $\boldsymbol{\mu}$ is the mean vector, and $\Sigma$ is the covariance matrix whose entries describe the covariance between each pair of random variables.
+         \end{bmatrix}   \sim \mathcal{N}(\boldsymbol{\mu},\Sigma)
+\]
+
+where $\boldsymbol{\mu}$ is the mean vector, and $\Sigma$ is the covariance matrix whose entries describe the covariance
+between each pair of random variables.
 
 \section{Gaussian Process}
-A random process is essentially a collection of random variables jointly characterized  as a set or vector of random variables with a multivariate joint probability distribution. A Gaussian process $f(\boldsymbol{x})$ is defined as a a random process where each set of random variable in the random process is has a multivariate Gaussian distribution. $f(\boldsymbol{x})$ is fully characterized by a mean function  $m(\boldsymbol{x})$ and covariance function, $K(\boldsymbol{x},\boldsymbol{x'})$:
-\[f(\boldsymbol{x})\sim\mathcal{GP}(m(\boldsymbol{x}),K(\boldsymbol{x},\boldsymbol{x'}))\]
 
-Typically, the mean function is zero. The kernel for the covariance is chosen based on some prior belief about the dataset; more on kernels is discussed in \ref{subsection:kernels}.
+A random process is essentially a collection of random variables jointly characterized  as a set or vector of random
+variables with a multivariate joint probability distribution. A Gaussian process $f(\boldsymbol{x})$ is defined as a a
+random process where each set of random variable in the random process is has a multivariate Gaussian distribution.
+$f(\boldsymbol{x})$ is fully characterized by a mean function  $m(\boldsymbol{x})$ and covariance function,
+$K(\boldsymbol{x},\boldsymbol{x'})$:
+
+\[
+  f(\boldsymbol{x})\sim\mathcal{GP}(m(\boldsymbol{x}),K(\boldsymbol{x},\boldsymbol{x'}))
+\]
+
+Typically, the mean function is zero. The kernel for the covariance is chosen based on some prior belief about the
+dataset; more on kernels is discussed in \ref{subsection:kernels}.
 
 \section{Regression}
-Suppose we observe training data $\boldsymbol{t}$ and choose kernel $\kappa$. Then the mean and covariance functions are given by
-\[m(\boldsymbol{x})=C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}\boldsymbol{t}\]
-\[K(\boldsymbol{x},\boldsymbol{x'})=C_{\boldsymbol{x}\boldsymbol{x'}}-C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}C_{\boldsymbol{x}\boldsymbol{t}}\]
-where $C_{\boldsymbol{x}\boldsymbol{t}} = \kappa(\boldsymbol{x},\boldsymbol{t})$, $C_{\boldsymbol{t}} = \kappa(\boldsymbol{t},\boldsymbol{t})$, and $C_{\boldsymbol{x}\boldsymbol{x'}} = \kappa(\boldsymbol{x},\boldsymbol{x'})$.
-Those interested in the derivation of the results are encouraged to consult section 6.4.2 of \cite{bishop_pattern_2006}.
 
-\subsection{Kernels}
+Suppose we observe training data $\boldsymbol{t}$ and choose kernel $\kappa$. Then the mean and covariance functions are
+given by 
 
-\label{subsection:kernels}
+\begin{gather*}
+  m(\boldsymbol{x})=C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}\boldsymbol{t} \\
+  K(\boldsymbol{x},\boldsymbol{x'})=C_{\boldsymbol{x}\boldsymbol{x'}}-C_{\boldsymbol{x}\boldsymbol{t}}^\top
+  C_{\boldsymbol{t}}^{-1}C_{\boldsymbol{x}\boldsymbol{t}}
+\end{gather*}
+
+where $C_{\boldsymbol{x}\boldsymbol{t}} = \kappa(\boldsymbol{x},\boldsymbol{t})$, $C_{\boldsymbol{t}} =
+\kappa(\boldsymbol{t},\boldsymbol{t})$, and $C_{\boldsymbol{x}\boldsymbol{x'}} =
+\kappa(\boldsymbol{x},\boldsymbol{x'})$.  Those interested in the derivation of the results are encouraged to consult
+section 6.4.2 of \cite{bishop_pattern_2006}.
+
+\subsection{Kernels} \label{subsection:kernels}
+
+Covariance Functions or kernels, denoted $\kappa(\bx, \bx')$, form the core of a Gaussian process. Kernels allow
+projection of input data into a higher dimensional feature space, allowing easier separability of data in this higher
+dimensional space. Gaussian processes leverage the kernel trick to featurize input data. In particular, if we have a
+function $\Phi(\bx): \R^d \rightarrow \R^n$, we can write the kernel defined by this function as:
+
+\[
+  \kappa(\bx, \bx') = \Phi(\bx)^\top \Phi(\bx')
+\]
+
+\todo{finish derivation of kernel trick in GP}
+
+\subsubsection{Radial Basis Function (RBF) Kernel}
+
+The Radial Basis Function (RBF) Kernel, also known as the Squared Exponential Kernel, is given by:
+
+\[
+  \kappa_{RBF}(\bx, \bx') = \sigma^2 \exp\left( - \frac{\|\bx -\bx' \|_{2}^{2}}{2 \ell^2} \right)
+\]
+
+This kernel is parametrized by two parameters, the lengthscale $\ell$ and the variance $\sigma^2$. The lengthscale
+determines the width of the kernel, and the variance scales the kernel\cite{duvenaud_automatic_2014}. \todo{graph
+kernels with various lengthscales and variances}
+
+\subsubsection{Rational Quadratic Kernel}
+
+The Rational Quadratic Kernel is another standard kernel is similar to the RBF kernel. It can be constructed from
+summing RBF kernels with varying lengthscales. The kernel is given by:
+
+\[
+  \kappa_{RQ}(\bx, \bx') = \sigma^2 \left( 1 + \frac{\| \bx - \bx' \|_{2}^{2}}{2 \alpha \ell^2} \right)^{-\alpha}
+\]
+
+This kernel is parametrized by three parameters, the lengthscale $\ell$, the variance $\sigma^2$, and the lengthscale
+weighting parameter $\alpha$\cite{duvenaud_automatic_2014}.
+
+\todo{Add some pictures}
+
+\section{Boston Housing Dataset}
+
+\section{Results}
 
 \section*{References}
 
@@ -98,7 +180,6 @@ Those interested in the derivation of the results are encouraged to consult sect
 
 \small
 
-% [1] C. M. Bishop, Pattern recognition and machine learning. New York: Springer, 2006.
 \bibliography{gpr}
 
 \end{document}
