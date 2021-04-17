@@ -15,7 +15,8 @@ noise = 0;
 datanoise = 0;
 p = 1;
 alpha = 1;
-kernel = @(x, y)rat_quad_kernel(x, y, sigma_f, l, p, alpha);
+% kernel = @(x, y)rat_quad_kernel(x, y, sigma_f, l, alpha);
+kernel = @(x, y)inverse_rat_quad_kernel(x, y, sigma_f, l, alpha);
 [mu_pred, var_pred] = fit_gp(Xtrain, ytrain, Xtest, noise, datanoise, kernel);
 
 rmse = sqrt(mean((mu_pred - ytest).^2));

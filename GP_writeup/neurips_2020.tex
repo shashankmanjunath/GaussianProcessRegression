@@ -26,6 +26,8 @@
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
 \usepackage{amsmath}        % math notation etc
+\usepackage{graphicx}       % inserting images
+\usepackage{float}          % image placement
 \usepackage{xcolor}         % to do macro
 
 \newcommand{\R}{\mathbb{R}}
@@ -33,6 +35,7 @@
 \newcommand{\todo}[1]{\textcolor{red}{#1}}
 
 \bibliographystyle{plain}
+\graphicspath{ {./figures/} }
 
 \title{On Gaussian Processes for Regression}
 
@@ -153,8 +156,12 @@ The Radial Basis Function (RBF) Kernel, also known as the Squared Exponential Ke
 \]
 
 This kernel is parametrized by two parameters, the lengthscale $\ell$ and the variance $\sigma^2$. The lengthscale
-determines the width of the kernel, and the variance scales the kernel\cite{duvenaud_automatic_2014}. \todo{graph
-kernels with various lengthscales and variances}
+determines the width of the kernel, and the variance scales the kernel\cite{duvenaud_automatic_2014}. 
+
+\begin{figure}[H] \label{fig:square_exp_kernel}
+  \caption{Graph of a square exponential kernel for various lengthscales and variances}
+  \includegraphics[width=\textwidth]{square_exp_kernel}
+\end{figure}
 
 \subsubsection{Rational Quadratic Kernel}
 
@@ -168,7 +175,29 @@ summing RBF kernels with varying lengthscales. The kernel is given by:
 This kernel is parametrized by three parameters, the lengthscale $\ell$, the variance $\sigma^2$, and the lengthscale
 weighting parameter $\alpha$\cite{duvenaud_automatic_2014}.
 
-\todo{Add some pictures}
+\begin{figure}[H] \label{fig:rqk}
+  \caption{Graph of a rational quadratic kernel for $\sigma = 1$, $\ell = 1$, and various $\alpha$ values}
+  \includegraphics[width=\textwidth]{rqk}
+\end{figure}
+
+\subsubsection{Inverse Rational Quadratic Kernel}
+
+\subsubsection{Periodic Kernel}
+
+The periodic kernel allows us to model periodic functions. The kernel is given by:
+
+\[
+  \kappa_{P}(\bx, \bx') = \sigma^{2}  \exp(- \frac{\frac{2 \sin^{2}(\pi \|\bx - \bx'\|)}{p}}{\ell^{2}})
+\]
+
+This kernel is parametrized by two parameters, $p$ which describes the period of the function, and $\ell$ which is the
+lengthscale\cite{duvenaud_automatic_2014}.
+
+\todo{pictures}
+
+\subsubsection{Combination Kernels}
+
+\todo{fill in}
 
 \section{Boston Housing Dataset}
 
