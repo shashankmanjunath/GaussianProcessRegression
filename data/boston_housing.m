@@ -17,7 +17,7 @@ perm = randperm(n); % remove any possible ordering fx
 x = x(perm,:); 
 y = y(perm);
 
-Ntrain = 300;
+Ntrain = 400;
 Xtrain = x(1:Ntrain,:); 
 ytrain = y(1:Ntrain);
 Xtest = x(Ntrain+1:end,:); 
