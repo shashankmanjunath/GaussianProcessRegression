@@ -35,7 +35,6 @@
 \newcommand{\bx}{\boldsymbol{x}}
 \newcommand{\todo}[1]{\textcolor{red}{#1}}
 
-\bibliographystyle{plain}
 \graphicspath{ {./figures/} }
 
 \title{On Gaussian Processes for Regression}
@@ -148,6 +147,9 @@ function $\Phi(\bx): \R^d \rightarrow \R^n$, we can write the kernel defined by 
 
 \todo{finish derivation of kernel trick in GP}
 
+We illustrate specific kernels that we used below. These kernels can additionally be combined through addition and
+multiplication of the kernels together, though we do not explore this as part of this project.
+
 \subsubsection{Radial Basis Function (RBF) Kernel}
 
 The Radial Basis Function (RBF) Kernel, also known as the Squared Exponential Kernel, is given by:
@@ -157,12 +159,8 @@ The Radial Basis Function (RBF) Kernel, also known as the Squared Exponential Ke
 \]
 
 This kernel is parametrized by two parameters, the lengthscale $\ell$ and the variance $\sigma^2$. The lengthscale
-determines the width of the kernel, and the variance scales the kernel\cite{duvenaud_automatic_2014}. 
-
-\begin{figure}[H] \label{fig:square_exp_kernel}
-  \caption{Graph of a square exponential kernel for various lengthscales and variances}
-  \includegraphics[width=\textwidth]{square_exp_kernel}
-\end{figure}
+determines the width of the kernel, and the variance scales the kernel\cite{duvenaud_automatic_2014}. We provide an
+images of the RBF Kernel with various lengthscales and variances in Figure~\ref{fig:square_exp_kernel}
 
 \subsubsection{Rational Quadratic Kernel}
 
@@ -174,14 +172,8 @@ summing RBF kernels with varying lengthscales. The kernel is given by:
 \]
 
 This kernel is parametrized by three parameters, the lengthscale $\ell$, the variance $\sigma^2$, and the lengthscale
-weighting parameter $\alpha$\cite{duvenaud_automatic_2014}.
-
-\begin{figure}[H] \label{fig:rqk}
-  \caption{Graph of a rational quadratic kernel for $\sigma = 1$, $\ell = 1$, and various $\alpha$ values}
-  \includegraphics[width=\textwidth]{rqk}
-\end{figure}
-
-\subsubsection{Inverse Rational Quadratic Kernel}
+weighting parameter $\alpha$\cite{duvenaud_automatic_2014}. We provide images of the Rational Quadratic Kernel with
+various $\alpha$ values in Figure~\ref{fig:rqk}
 
 \subsubsection{Periodic Kernel}
 
@@ -192,12 +184,9 @@ The periodic kernel allows us to model periodic functions. The kernel is given b
 \]
 
 This kernel is parametrized by two parameters, $p$ which describes the period of the function, and $\ell$ which is the
-lengthscale\cite{duvenaud_automatic_2014}.
+lengthscale\cite{duvenaud_automatic_2014}. We provide images of the Periodic Kernel with various $p$ values in
+Figure~\ref{fig:periodic_kernel}
 
-\begin{figure}[H] \label{fig:periodic_kernel}
-  \caption{Graph of a rational quadratic kernel for $\sigma = 1$, $\ell = 1$, and various $p$ values}
-  \includegraphics[width=\textwidth]{periodic_kernel}
-\end{figure}
 
 \section{Boston Housing Dataset}
 
@@ -210,6 +199,7 @@ all other features are used for model fitting. The features included in the data
 
 \begin{table}[H]
   \centering
+  \caption{Table of Boston Housing Dataset feature names and features}
   \begin{tabular}{ || m{3cm} | m{7cm} || }
     \hline
     \textbf{Feature Name} & \textbf{Feature Description} \\
@@ -243,20 +233,43 @@ all other features are used for model fitting. The features included in the data
     MEDV    & Median value of owner-occupied homes in \$1000's \\
     \hline
   \end{tabular}
-  \caption{Table of Boston Housing Dataset feature names and features}
   \label{table:bhd_feat}
 \end{table}
 
-For the application of Gaussian Processes, we use the regression task, i.e. fitting to the MEDV feature.
+For the application of Gaussian Processes, we use the regression task, i.e. fitting to the MEDV feature. Prior to
+fitting on the data, we normalize the data per feature. Specifically, for each feature in the dataset, we perform the
+following operation:
+
+\[
+  X_{\text{feat}} = \frac{X_{\text{feat}} - \mu(X_{\text{feat}})}{\sigma(X_{\text{feat}})}
+\]
+
+where $\mu(X)$ is the mean value of that feature in the training set, and $\sigma(X)$ is the standard deviation of that
+feature in the training set.
 
 \section{Results}
+\section{Figures}
+\begin{figure}[H]
+  \centering
+  \caption{Graph of a square exponential kernel for various lengthscales and variances}
+  \label{fig:square_exp_kernel}
+  \includegraphics[trim={0 7cm 0 7cm},clip,keepaspectratio=true,scale=0.5]{square_exp_kernel}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \caption{Graph of a rational quadratic kernel for $\sigma = 1$, $\ell = 1$, and various $\alpha$ values}
+  \label{fig:rqk}
+  \includegraphics[trim={0 7cm 0 7cm},clip,keepaspectratio=true,scale=0.5]{rqk}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \caption{Graph of a rational quadratic kernel for $\sigma = 1$, $\ell = 1$, and various $p$ values}
+  \label{fig:periodic_kernel}
+  \includegraphics[trim={0 7cm 0 7cm},clip,keepaspectratio=true,scale=0.5]{periodic_kernel}
+\end{figure}
 
-\section*{References}
-
-\medskip
-
-\small
-
+\section{References}
+\bibliographystyle{plain}
 \bibliography{gpr}
 
 \end{document}
