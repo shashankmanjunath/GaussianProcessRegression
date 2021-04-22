@@ -69,7 +69,6 @@
     \item In a GP, we assume any new points we observe follow the same multivariate normal observed in our training data
     \item Some history of GPs 
     	\cite{rasmussen_gaussian_2006}
-      \todo{add some citations}
     \begin{itemize}
       \item Blight and Ott first introducted GPs as priors over functions in 1975
       \item Gaussian Process models were first recognized as the limit of a Bayesian neural network by Mackay (1992) and
@@ -144,7 +143,8 @@
 
 \begin{frame}
   \frametitle{A Simple Demonstration}
-
+  \vspace*{-1cm}
+  \hspace*{-2cm} \includegraphics[scale=0.5]{synthetic_data}
   \todo{fit some GPs on sine waves or something}
 \end{frame}
 
@@ -154,7 +154,7 @@
     \item Originally published in 1978\cite{harrison_hedonic_1978}
     \item 506 data points, 13 features, 1 label (median value of a house in a Boston suburb, in \$1000s)
     \item Well-suited to Gaussian processes due to small size
-    \item Features detailed in \ref{table:bhd_feat}
+    \item Features detailed in Table \ref{table:bhd_feat}
   \end{itemize}
 \end{frame}
 
@@ -202,9 +202,10 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Normalization}
+  \frametitle{Implementation Details}
 
   \begin{itemize}
+    \item We implemented grid search for our hyperparameters
     \item We normalize our features, which leads to improved algorithm performance, using the following
       formula:
 
@@ -212,6 +213,13 @@
         X_{\text{feat}} = \frac{X_{\text{feat}} - \mu(X_{\text{feat}})}{\sigma(X_{\text{feat}})}
       \]
     \item We also normalize our label, then convert back to given units (value in \$1000s) after fitting the GP.
+    \item We use the RMSE metric:
+      \[
+        RMSE = \sqrt{\frac{\sum\limits_{i=1}^{N} (y_i - \hat y_i)^{2}}{N}}
+      \]
+
+      where $y_i$ is the true value, $\hat y_i$ is the predicted value, and $N$ is the number of samples
+
   \end{itemize}
 \end{frame}
 
@@ -223,5 +231,10 @@
   \frametitle{References}
   \bibliographystyle{amsalpha}
   \bibliography{../gpr}
+
+  Code for MATLAB implementation, LaTeX for presentation and paper can be found
+  \href{https://github.com/shashankmanjunath/GaussianProcessRegression}{on Github at
+  https://github.com/shashankmanjunath/GaussianProcessRegression}
+
 \end{frame}
 \end{document}
