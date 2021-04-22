@@ -57,7 +57,7 @@
         correlated
       \item If they are far apart, the temperatures will be less correlated.
       \item We can model the $n$ known points as a multivariate Gaussian distribution with the covariance of points
-        $\bx_i$ and $\bx_j$ dependant on the physical distance between the two points, then use our distribution to
+        $\bx_i$ and $\bx_j$ dependent on the physical distance between the two points, then use our distribution to
         predict the temperature at $\bx_{n+1}$
     \end{itemize}
   \end{itemize}
@@ -67,7 +67,8 @@
   \frametitle{Introduction}
   \begin{itemize}
     \item In a GP, we assume any new points we observe follow the same multivariate normal observed in our training data
-    \item Some history of GPs
+    \item Some history of GPs 
+    	\cite{rasmussen_gaussian_2006}
       \todo{add some citations}
     \begin{itemize}
       \item Blight and Ott first introducted GPs as priors over functions in 1975
@@ -138,8 +139,7 @@
       \end{gather*}
   \end{itemize}
 
-  Those interested in the derivation of the results are encouraged to consult section 2 of
-  \cite{rasmussen_gaussian_2006}.
+  Those interested in the derivation of the results are encouraged to consult section 2 of \cite{rasmussen_gaussian_2006}.
 \end{frame}
 
 \begin{frame}

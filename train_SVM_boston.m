@@ -21,8 +21,8 @@ ytrain_norm = (ytrain - ymean_train) / ystd_train;
 % Train an SVM model; uncomment which kernel to use
 mdl=fitrsvm(Xtrain_norm,ytrain_norm,'KernelFunction','rat_quad_SVM_kernel');
 % mdl=fitrsvm(Xtrain_norm,ytrain_norm); % linear kernel 
-% mdl=fitrsvm(Xtrain_norm,ytrain_norm,'KernelFunction','gaussian'); % gaussian/RBF kernel 
-% mdl=fitrsvm(Xtrain_norm,ytrain_norm,'KernelFunction','polynomial','PolynomialOrder',2); % linear kernel 
+mdl=fitrsvm(Xtrain_norm,ytrain_norm,'KernelFunction','gaussian'); % gaussian/RBF kernel 
+mdl=fitrsvm(Xtrain_norm,ytrain_norm,'KernelFunction','polynomial','PolynomialOrder',2); % linear kernel 
 yfit=predict(mdl,Xtest_norm);
 
 % Undoing normalization
