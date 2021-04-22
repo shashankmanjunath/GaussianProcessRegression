@@ -1,7 +1,7 @@
 % This script defines a periodic kernel
 
 
-function val = periodic_kernel(m1, m2, sigma_f, l, p, alpha)
+function val = periodic_kernel(m1, m2, sigma_f, l, p)
     [m, d1] = size(m1);
     [n, d2] = size(m2);
 

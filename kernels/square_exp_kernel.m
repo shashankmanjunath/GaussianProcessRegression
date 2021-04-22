@@ -1,7 +1,7 @@
 % This script defines a squared exponential kernel
 
 
-function val = square_exp_kernel(m1, m2, sigma_f, l, p, alpha)
+function val = square_exp_kernel(m1, m2, sigma_f, l)
     [m, d1] = size(m1);
     [n, d2] = size(m2);
 

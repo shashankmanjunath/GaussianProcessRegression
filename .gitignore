@@ -1,6 +1,12 @@
-
-GP writeup/neurips_2020.synctex.gz
-GP writeup/neurips_2020.log
-GP writeup/neurips_2020.synctex.gz
-GP writeup/neurips_2020.log
-*.log
+*.synctex.gz*
+*.log*
+*.aux*
+*.bbl*
+*.blg*
+*.fdb_latexmk*
+*.fls*
+*.out*
+*.nav*
+*.snm*
+*.toc*
+.DS_Store

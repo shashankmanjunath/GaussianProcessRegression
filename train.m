@@ -1,8 +1,9 @@
 clear; close all; clc;
+addpath("kernels/")
 
 rng(2021);
 
-num_train = 10;
+num_train = 5;
 X_train = normrnd(0, 2.5, num_train, 1);
 y = sin(X_train);
 l = 1;
@@ -10,12 +11,14 @@ p = 2; % for periodic kernel
 sigma_f = 1;
 noisetest = 1e-6;
 noisedata = 1e-1;
-num_preds = 5;
+num_preds = 3;
 alpha = 1e-1;
 num_test = 1000;
 X_test = linspace(-5, 5, num_test)';
 
-kernel = @(x, y)periodic_kernel(x, y, sigma_f, l, p, alpha);
+% kernel = @(x, y)periodic_kernel(x, y, sigma_f, l, p);
+% kernel = @(x, y)rat_quad_kernel(x, y, sigma_f, l, alpha);
+kernel = @(x, y)square_exp_kernel(x, y, sigma_f, l);
 tic
 [mu_pred, var_pred] = fit_gp(X_train, y, X_test, noisetest, noisedata, kernel);
 toc
