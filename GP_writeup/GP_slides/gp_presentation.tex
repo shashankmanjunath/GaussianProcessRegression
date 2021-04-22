@@ -17,6 +17,7 @@
 \usepackage{adjustbox}      % Shrink stuff
 
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
 \newcommand{\bx}{\boldsymbol{x}}
 \newcommand{\todo}[1]{\textcolor{red}{#1}}
 
@@ -43,177 +44,120 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Abstract}
+  \frametitle{Introduction}
+
   \begin{itemize}
-    \item Gaussian processes emerged in machine learning as a powerful tool for regression and classification that
-      provides interpretability through kernel choice and uncertainty quantification.
-    \item By leveraging properties of multivariate normal distributions and Bayes’s rule, we may infer a probability
-      distribution over possible functions when fitting a dataset
-    \item This Bayesian framework allows flexibility through choosing a covariance function as a prior belief about the
-      dataset, which can provide further insight into the trends of the training data. 
+    \item Gaussian processes are a class of machine learning models that allow us to easily incorporate prior
+      observations into our data. 
+    \item Example: predicting temperatures throughout a room.
+    \begin{itemize}
+      \item Suppose you are trying to determine the temperature at a certain point in a room, $\bx_{n+1}$
+      \item You know the temperatures at points $\{\bx_1, \hdots, \bx_n\}$
+      \item If $\{\bx_1, \hdots, \bx_n, \bx_{n+1}\}$ are close, the temperatures at these points will be highly
+        correlated
+      \item If they are far apart, the temperatures will be less correlated.
+      \item We can model the $n$ known points as a multivariate Gaussian distribution with the covariance of points
+        $\bx_i$ and $\bx_j$ dependant on the physical distance between the two points, then use our distribution to
+        predict the temperature at $\bx_{n+1}$
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Abstract}
-  Our specific contributions are:
+  \frametitle{Introduction}
   \begin{itemize}
-    \item We implement a multi-dimensional Gaussian process regressor in MATLAB, as well as several kernels for use with
-      this regressor
-    \item We evaluate the GP regression performance on the Boston Housing dataset, achieving root mean square errors
-      comparable to those in the top 10 of released results on the Kaggle website
-    \item We implement hyperparameter optimization through maximum likelihood estimation, to remove the need for
-      manual tuning of the hyperparameters
+    \item In a GP, we assume any new points we observe follow the same multivariate normal observed in our training data
+    \item Some history of GPs
+      \todo{add some citations}
+    \begin{itemize}
+      \item Blight and Ott first introducted GPs as priors over functions in 1975
+      \item Gaussian Process models were first recognized as the limit of a Bayesian neural network by Mackay (1992) and
+        Neal (1996)
+    \end{itemize}
+    \item GPs are non-parametric models (unlike models such as Neural Networks)
+    \item GPs allows us to quantify uncertainty in our predictions
+    \item GPs are not advantageous in that they scale poorly to large datasets
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Gaussian Random Variables}
+  \frametitle{Multivariate Gaussian Distributions}
 
-A random variable is a function that maps from an event space to a measurable space. The event space represents a set of
-all possible outcomes that the random variable may take, and the measurable space is a probability measure between 0 and
-1 (inclusive). We say that a random variable $X$ is normally distributed if the event space has a Gaussian probability
-distribution, fully characterized by two parameters: a mean $\mu$ and variance $\sigma^2$:
+  \begin{itemize}
+    \item A set of univariate Gaussian random variables may be characterized jointly as a multivariate Gaussian
+      distribution, with joint probability distribution fully characterized by a mean vector and a covariance matrix:
 
-\[
-  X\sim \mathcal{N}(\mu,\sigma^2)
-\]
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Gaussian Random Variables}
-For a one-dimensional Gaussian random variable, we refer to its distribution as a univariate Gaussian distribution. A
-set of Gaussian random variables may be characterized jointly as a multivariate Gaussian distribution, with joint
-probability distribution fully characterized by a mean vector and a covariance matrix:
-
-\[
-  X = \begin{bmatrix}
-           X_{1} \\
-           X_{2} \\
-           \vdots \\
-           X_{n}
-         \end{bmatrix}   \sim \mathcal{N}(\boldsymbol{\mu},\Sigma)
-\]
-
-where $\boldsymbol{\mu}$ is the mean vector, and $\Sigma$ is the covariance matrix whose entries describe the covariance
-between each pair of random variables.
+      \[
+        X = \begin{bmatrix}
+                 X_{1} \\
+                 X_{2} \\
+                 \vdots \\
+                 X_{n}
+               \end{bmatrix}   \sim \mathcal{N}(\boldsymbol{\mu},\Sigma)
+      \]
+      \begin{itemize}
+        \item $\boldsymbol{\mu}$ indicates the mean vector
+        \item $\Sigma$ indicates the covariance matrix whose entries describe the covariance between each pair of random
+          variables
+      \end{itemize}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Gaussian Processes}
-A random process is essentially a collection of random variables jointly characterized  as a set or vector of random
-variables with a multivariate joint probability distribution. A Gaussian process $f(\boldsymbol{x})$ is defined as a a
-random process where each set of random variable in the random process is has a multivariate Gaussian distribution.
-$f(\boldsymbol{x})$ is fully characterized by a mean function  $m(\boldsymbol{x})$ and covariance function,
-$K(\boldsymbol{x},\boldsymbol{x'})$:
+  \begin{itemize}
+    \item A Gaussian process $f(\boldsymbol{x})$ is defined as a a random process where each set of random variable in
+      the random process is has a multivariate Gaussian distribution.
+    \item In mathematical notation, $f(\boldsymbol{x})$ is fully characterized by a mean function  $m(\boldsymbol{x})$
+      and covariance function, $K(\boldsymbol{x},\boldsymbol{x'})$:
+      \begin{gather*}
+        f(\boldsymbol{x})\sim\mathcal{GP}(m(\boldsymbol{x}),K(\boldsymbol{x},\boldsymbol{x'})) \\
+        K(\bx, \bx') = \E[(f(\bx) - m(\bx))(f(\bx') - m(\bx'))]
+      \end{gather*}
 
-\[
-  f(\boldsymbol{x})\sim\mathcal{GP}(m(\boldsymbol{x}),K(\boldsymbol{x},\boldsymbol{x'}))
-\]
-
-Typically, the mean function is zero. The kernel for the covariance is chosen based on some prior belief about the
-dataset; more on kernels is discussed in Slide \ref{slide:kernels}.
+    \item The mean function $m(\bx)$ is typically defined as zero
+    \item The covariance is chosen based on some prior belief about the dataset
+    \item The covariance function is analagous to a kernel function $\kappa(\cdot, \cdot)$, where each entry of the
+      covariance matrix is the kernel function calculated between the corresponding points
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Gaussian Processes for Regression}
 
-Suppose we observe training data $\boldsymbol{t}$ and choose kernel $\kappa$. Then the mean and covariance functions are
-given by 
+  \begin{itemize}
+    \item While we have defined a Gaussian process, we now describe how to fit a Gaussian process (predictive
+      distribution) given a training set (prior distribution) and test points
+    \item Suppose we observe training data $\bx$, test data $\bx'$, and choose kernel $\kappa$. Then the mean and
+      covariance functions are given by 
 
-\begin{gather*}
-  m(\boldsymbol{x})=C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}\boldsymbol{t} \\
-  K(\boldsymbol{x},\boldsymbol{x'})=C_{\boldsymbol{x}\boldsymbol{x'}}-C_{\boldsymbol{x}\boldsymbol{t}}^\top
-  C_{\boldsymbol{t}}^{-1}C_{\boldsymbol{x}\boldsymbol{t}}
-\end{gather*}
+      \begin{gather*}
+        m(\boldsymbol{x})=\kappa(\bx, \bx')^\top \left(\kappa(\bx, \bx) + \sigma_{n}^{2} I\right)^{-1}\bx \\
+        K(\boldsymbol{x},\boldsymbol{x'}) = \kappa(\bx', \bx') - \kappa(\bx, \bx')^{\top}\left(\kappa(\bx, \bx) +
+        \sigma_{n}^{2}I\right)^{-1}\kappa(\bx, \bx')
+      \end{gather*}
+  \end{itemize}
 
-where $C_{\boldsymbol{x}\boldsymbol{t}} = \kappa(\boldsymbol{x},\boldsymbol{t})$, $C_{\boldsymbol{t}} =
-\kappa(\boldsymbol{t},\boldsymbol{t})$, and $C_{\boldsymbol{x}\boldsymbol{x'}} =
-\kappa(\boldsymbol{x},\boldsymbol{x'})$.  Those interested in the derivation of the results are encouraged to consult
-section 6.4.2 of \cite{bishop_pattern_2006}.
-\end{frame}
-
-\begin{frame}\label{slide:kernels}
-  \frametitle{Kernels}
-
-Covariance Functions or kernels, denoted $\kappa(\bx, \bx')$, form the core of a Gaussian process. Kernels allow
-projection of input data into an alternate feature space, allowing easier separability of data in this new feature
-space. Gaussian processes leverage kernels to featurize input data. In particular, if we have a function
-$\Phi(\bx): \R^d \rightarrow \R^n$, we can write the kernel defined by this function as:
-
-\[
-  \kappa(\bx, \bx') = \langle \Phi(\bx), \Phi(\bx') \rangle = \Phi(\bx)^\top \Phi(\bx')
-\]
-
-In order to illustrate how kernels fit into Gaussian Processes, we will 
-
-\todo{finish derivation of kernel trick in GP}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Radial Basis Function Kernel}
-
-The Radial Basis Function (RBF) Kernel, also known as the Squared Exponential Kernel, is given by:
-
-\[
-  \kappa_{RBF}(\bx, \bx') = \sigma^2 \exp\left( - \frac{\|\bx -\bx' \|_{2}^{2}}{2 \ell^2} \right)
-\]
-
-This kernel is parametrized by two parameters, the lengthscale $\ell$ and the variance $\sigma^2$. The lengthscale
-determines the width of the kernel, and the variance scales the kernel\cite{duvenaud_automatic_2014}. We provide an
-images of the RBF Kernel with various lengthscales and variances in Figure~\ref{fig:square_exp_kernel}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Rational Quadratic Kernel}
-
-The Rational Quadratic Kernel is another standard kernel is similar to the RBF kernel. It can be constructed from
-summing RBF kernels with varying lengthscales. The kernel is given by:
-
-\[
-  \kappa_{RQ}(\bx, \bx') = \sigma^2 \left( 1 + \frac{\| \bx - \bx' \|_{2}^{2}}{2 \alpha \ell^2} \right)^{-\alpha}
-\]
-
-This kernel is parametrized by three parameters, the lengthscale $\ell$, the variance $\sigma^2$, and the lengthscale
-weighting parameter $\alpha$\cite{duvenaud_automatic_2014}. We provide images of the Rational Quadratic Kernel with
-various $\alpha$ values in Figure~\ref{fig:rqk}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Periodic Kernel}
-The periodic kernel allows us to model periodic functions. The kernel is given by:
-
-\[
-  \kappa_{P}(\bx, \bx') = \sigma^{2}  \exp(- \frac{2 \sin^{2}(\pi \|\bx - \bx'\|)}{p \ell^{2}})
-\]
-
-This kernel is parametrized by two parameters, $p$ which describes the period of the function, and $\ell$ which is the
-lengthscale\cite{duvenaud_automatic_2014}. We provide images of the Periodic Kernel with various $p$ values in
-Figure~\ref{fig:periodic_kernel}
-\end{frame}
-\begin{frame}
-  \frametitle{Bayesian Hyperparameter Optimization}
-  \todo{@manjuns need to finish this}
+  Those interested in the derivation of the results are encouraged to consult section 2 of
+  \cite{rasmussen_gaussian_2006}.
 \end{frame}
 
 \begin{frame}
   \frametitle{A Simple Demonstration}
 
-\todo{fit some GPs on sine waves or something}
+  \todo{fit some GPs on sine waves or something}
 \end{frame}
 
 \begin{frame}
   \frametitle{The Boston Housing Dataset}
-The Boston Housing Dataset, originally published in 1978 contains 506 data points, each containing 13 features and 1
-label for regression\cite{harrison_hedonic_1978}. The dataset provides the median value of houses in Boston suburbs.
-This dataset is particularly suitable for Gaussian processes, as the dataset is quite small. The label is the median
-value of owner-occupied homes in \$1000s, and all other features are used for model fitting. The features included in
-the dataset are given in Table \ref{table:bhd_feat}.
-
+  \begin{itemize}
+    \item Originally published in 1978\cite{harrison_hedonic_1978}
+    \item 506 data points, 13 features, 1 label (median value of a house in a Boston suburb, in \$1000s)
+    \item Well-suited to Gaussian processes due to small size
+    \item Features detailed in \ref{table:bhd_feat}
+  \end{itemize}
 \end{frame}
+
 \begin{frame}
   \begin{table}
     \centering
@@ -260,17 +204,15 @@ the dataset are given in Table \ref{table:bhd_feat}.
 \begin{frame}
   \frametitle{Normalization}
 
-For the application of Gaussian Processes, we use the regression task, i.e. fitting to the MEDV feature. Prior to
-fitting on the data, we normalize the data per feature. Specifically, for each feature in the dataset, we perform the
-following operation:
+  \begin{itemize}
+    \item We normalize our features, which leads to improved algorithm performance, using the following
+      formula:
 
-\[
-  X_{\text{feat}} = \frac{X_{\text{feat}} - \mu(X_{\text{feat}})}{\sigma(X_{\text{feat}})}
-\]
-
-where $\mu(X)$ is the mean value of that feature in the training set, and $\sigma(X)$ is the standard deviation of that
-feature in the training set. We additionally normalize the MEDV feature, and convert it back to non-normalized units
-before calculating our RMSE.
+      \[
+        X_{\text{feat}} = \frac{X_{\text{feat}} - \mu(X_{\text{feat}})}{\sigma(X_{\text{feat}})}
+      \]
+    \item We also normalize our label, then convert back to given units (value in \$1000s) after fitting the GP.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
