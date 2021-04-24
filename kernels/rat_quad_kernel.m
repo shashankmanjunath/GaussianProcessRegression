@@ -1,6 +1,5 @@
 % This script defines a rational quadratic kernel
 
-
 function val = rat_quad_kernel(m1, m2, sigma_f, l, alpha)
     [m, d1] = size(m1);
     [n, d2] = size(m2);
