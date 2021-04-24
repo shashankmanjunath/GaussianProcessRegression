@@ -24,12 +24,11 @@ sigma_f = 1;
 noise = 1e-6;
 datanoise = 1e-6;
 
-datanoise = 0;
 p = 1;
 alpha = 1;
+
 kernel = @(x, y)rat_quad_kernel(x, y, sigma_f, l, alpha);
 [mu_pred_norm, var_pred_norm] = fit_gp(Xtrain_norm, ytrain_norm, Xtest_norm, noise, datanoise, kernel);
-
 
 % Undoing normalization
 mu_pred = (mu_pred_norm * ystd) + ymean;

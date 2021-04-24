@@ -5,5 +5,6 @@ name = {'GP Rational Quadratic';'SVM Rational Quadratic';
     'GP RBF';'SVM RBF';'GP 2-Polynomial';'SVM 2-Polynomial'};
 bar(val)
 set(gca, 'XTickLabel', name)  
+xtickangle(45)
 ylabel('RMSE')
 title('Regression performance comparison of GP with SVM')

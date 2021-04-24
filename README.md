@@ -7,4 +7,4 @@ Implementation of Gaussian Processes for Regression in MATLAB
 
 To Do:
 * 5-fold validation
-* Bayesian hyperparameter optimization
+* Add Linear regression to comparison
