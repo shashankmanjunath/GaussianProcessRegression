@@ -1,6 +1,6 @@
 % Trains GP on boston housing dataset
 
-clear; close all; clc;
+clear; close all;
 addpath('kernels/')
 rng('default')
 rng(42);
@@ -8,10 +8,23 @@ rng(42);
 load('./data/boston_housing_train.mat');
 load('./data/boston_housing_test.mat');
 
-D_x = cat(1,Xtest,Xtrain);
-D_y = cat(1,ytest,ytrain);
+num_splits = 5;
+
+Xtrain_final = Xtrain;
+ytrain_final = ytrain;
+Xtest_final = Xtest;
+ytest_final = ytest;
+
+D_x = Xtrain;
+D_y = ytrain;
+% D_x = cat(1,Xtest,Xtrain);
+% D_y = cat(1,ytest,ytrain);
 N = length(D_x);
-test_idx = linspace(1,N,6);
+test_idx = floor(linspace(1,N,num_splits+1));
+shuffle_idx = randperm(N);
+D_x = D_x(shuffle_idx, :);
+D_y = D_y(shuffle_idx);
+
 % just for reference
 % train_idx = [[test_idx(2):N];
 %             [1:test_idx(2)-1, test_idx(3):N];
@@ -19,25 +32,35 @@ test_idx = linspace(1,N,6);
 %             [1:test_idx(4)-1, test_idx(5):N];
 %             [1:test_idx(5)-1]];
 %
-average_RMSE = 0;
-for i = 1 : 5
+
+% average_RMSE = 0;
+
+num_grid = 6;
+rmse_arr = zeros(num_grid, num_grid, num_grid, num_grid);
+
+l = logspace(-4, 1, num_grid);
+sigma_f = logspace(-4, 1, num_grid);
+alpha = logspace(-2, 3, num_grid);
+
+c = linspace(0, 5, num_grid);
+p = logspace(-4, 1, num_grid);
+
+for i = 1 : num_splits 
+    fprintf("Training Fold %d\n", i);
     
-    Xtest = D_x(101*(i-1)+1:101*i,:);
-    if i == 1
-        Xtrain = D_x(test_idx(2):N,:);
-    elseif i == 5
-        Xtrain = D_x(1:test_idx(5)-1,:);
-    else
-        Xtrain = D_x([1:test_idx(i)-1,test_idx(i+1):N],:);
-    end
-    ytest = D_x(101*(i-1)+1:101*i)';
-    if i == 1
-        ytrain = D_x(test_idx(2):N)';
-    elseif i == 5
-        ytrain = D_x(1:test_idx(5)-1)';
-    else
-        ytrain = D_x([1:test_idx(i)-1,test_idx(i+1):N])';
-    end
+    % --- Calculating indices for train and test sets for fold i ---
+    train_set_idx = 1:N;
+    % Finding test indices
+    test_set_idx = test_idx(i):test_idx(i+1); 
+    % Removing test indices from train indices
+    train_set_idx = train_set_idx .* ~ismember(train_set_idx, test_set_idx);
+    train_set_idx = train_set_idx(train_set_idx ~= 0);
+
+    % Splitting fold
+    Xtrain = D_x(train_set_idx, :);
+    Xtest = D_x(test_set_idx, :);
+    ytrain = D_y(train_set_idx);
+    ytest = D_y(test_set_idx);
     
     % Normalizing Data
     mean_train = mean(Xtrain, 1);
@@ -49,28 +72,81 @@ for i = 1 : 5
     ystd = sqrt(var(ytrain));
     ytrain_norm = (ytrain - ymean) ./ ystd;
 
-    % Predicting
-    l = 0.8;
-    sigma_f = 1;
     noise = 1e-6;
+    datanoise = 1e-6;
 
-    datanoise = 0;
-    c = 0; 
-    p = 2;
-    alpha = 1;
-    % uncomment which kernel to use
-    kernel = @(x, y)rat_quad_kernel(x, y, sigma_f, l, alpha);
-    kernel = @(x, y)square_exp_kernel(x, y, sigma_f, l);
-    kernel = @(x, y)polynomial_kernel(x, y, c, p);
-    
-    [mu_pred_norm, var_pred_norm] = fit_gp(Xtrain_norm, ytrain_norm, Xtest_norm, noise, datanoise, kernel);
+    for aval = 1:num_grid
+        fprintf("[%d/%d]\n", aval, num_grid);
+        for bval = 1:num_grid
+            for cval = 1:num_grid
+                for dval = 1:num_grid
+                    % uncomment which kernel to use
+                    % kernel = @(x, y)rat_quad_kernel(x, y, sigma_f(sval), l(lval), alpha(aval));
+                    % kernel = @(x, y)square_exp_kernel(x, y, sigma_f(sval), l(lval));
+                    % kernel = @(x, y)periodic_kernel(x, y, sigma_f(aval), l(bval), p(cval));
+                    kernel = @(x, y)local_periodic_kernel(x, y, sigma_f(aval), l(bval), p(cval), alpha(dval));
+                    % kernel = @(x, y)polynomial_kernel(x, y, c(aval), p(bval));
+                    
+                    [mu_pred_norm, var_pred_norm] = fit_gp(Xtrain_norm, ytrain_norm, Xtest_norm, noise, datanoise, kernel);
 
+                    % Undoing normalization
+                    mu_pred = (mu_pred_norm * ystd) + ymean;
+                    var_pred = (var_pred_norm * ystd) + ymean;
 
-    % Undoing normalization
-    mu_pred = (mu_pred_norm * ystd) + ymean;
-    var_pred = (var_pred_norm * ystd) + ymean;
+                    rmse = sqrt(immse(mu_pred,ytest));
 
-    rmse = sqrt(immse(mu_pred,ytest));
-    average_RMSE = average_RMSE + rmse;
+                    rmse_arr(aval, bval, cval, dval) = rmse_arr(aval, bval, cval, dval) + rmse;
+                end
+            end
+        end
+    end
 end
-average_RMSE = average_RMSE / 5;
+
+% Finding best parameters
+% rmse_arr = rmse_arr / num_splits;
+
+min_rmse = min(min(min(min(rmse_arr))));
+linear_min_idx = find(rmse_arr == min_rmse);
+
+% If we have more than one minimum, we select one randomly
+if size(linear_min_idx, 1) >= 1
+    linear_min_idx = randsample(linear_min_idx, 1);
+end
+
+[s_idx, l_idx, p_idx, a_idx] = ind2sub(size(rmse_arr), linear_min_idx);
+
+opt_s = sigma_f(s_idx);
+opt_l = l(l_idx);
+opt_p = p(p_idx);
+opt_a = alpha(a_idx);
+
+% kernel = @(x, y)rat_quad_kernel(x, y, sigma_f(sval), l(lval), alpha(aval));
+% kernel = @(x, y)square_exp_kernel(x, y, sigma_f(sval), l(lval));
+% kernel = @(x, y)periodic_kernel(x, y, opt_s, opt_l, opt_p);
+kernel = @(x, y)local_periodic_kernel(x, y, opt_s, opt_l, opt_p, opt_a);
+% kernel = @(x, y)polynomial_kernel(x, y, c(aval), p(bval));
+
+fprintf("Best Parameters: [sigma_f]: %f, [l]: %f, [p]: %f, [alpha]: %f\n", opt_s, opt_l, opt_p, opt_a);
+% fprintf("Best Parameters: [c]: %f, [p]: %f\n", opt_c, opt_p);
+fprintf("Best Train RMSE: %f\n", min_rmse / num_splits);
+
+% --- Final Training ---
+mean_train = mean(Xtrain_final, 1);
+std_train = sqrt(var(Xtrain_final, 1));
+Xtrain_norm = (Xtrain_final - mean_train) ./ std_train;
+Xtest_norm = (Xtest_final - mean_train) ./ std_train;
+
+ymean = mean(ytrain_final);
+ystd = sqrt(var(ytrain_final));
+ytrain_norm = (ytrain_final - ymean) ./ ystd;
+
+[mu_pred_norm, var_pred_norm] = fit_gp(Xtrain_norm, ytrain_norm, Xtest_norm, noise, datanoise, kernel);
+
+% Undoing normalization
+mu_pred = (mu_pred_norm * ystd) + ymean;
+var_pred = (var_pred_norm * ystd) + ymean;
+
+best_rmse = sqrt(immse(mu_pred, ytest_final));
+
+fprintf("Test RMSE: %.3f\n", best_rmse);
+
