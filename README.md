@@ -7,7 +7,7 @@ Implementation of Gaussian Processes for Regression in MATLAB. Testing performed
 
 * To train a simple Gaussian Process Regressor on this dataset, run `train_boston.m`
 * To try a Gaussian Process Regressor on some toy data, run `train.m`
-* Compile our writeup and slides using `pdflatex`. Files can be found under `GP_writeup`
+* Compile our writeup and slides using `latex`. Files can be found under `GP_writeup`
 
 
 Performance Comparison of Gaussian Process for Regression with various kernels, SVM for regression with various kernels,
