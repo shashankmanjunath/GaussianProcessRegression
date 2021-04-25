@@ -1,0 +1,12 @@
+*.synctex.gz*
+*.log*
+*.aux*
+*.bbl*
+*.blg*
+*.fdb_latexmk*
+*.fls*
+*.out*
+*.nav*
+*.snm*
+*.toc*
+.DS_Store
