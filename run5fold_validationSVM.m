@@ -17,8 +17,6 @@ ytest_final = ytest;
 
 D_x = Xtrain;
 D_y = ytrain;
-% D_x = cat(1,Xtest,Xtrain);
-% D_y = cat(1,ytest,ytrain);
 N = length(D_x);
 test_idx = floor(linspace(1,N,num_splits+1));
 shuffle_idx = randperm(N);

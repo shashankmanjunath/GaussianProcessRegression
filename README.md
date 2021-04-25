@@ -9,7 +9,7 @@ To Do:
 * 5-fold validation
 * Add Linear regression to comparison
 
-Notes:
+Performance Comparison:
 
 GP:
   Square Exp Kernel: 
@@ -54,5 +54,6 @@ SVM:
     Best Train RMSE: 164.002678
     Test RMSE: 80.389
 
-Ridge Regression:
+Linear Regression:
+  Linear Regression Test RMSE: 4.751381
 
