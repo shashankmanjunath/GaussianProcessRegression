@@ -29,12 +29,13 @@ p = 1;
 alpha = 1;
 
 % kernel = @(x, y)rat_quad_kernel(x, y, sigma_f, l, alpha);
-kernel = @(x, y)polynomial_kernel(x, y, 0, 2);
+% kernel = @(x, y)polynomial_kernel(x, y, 0, 2);
+kernel = @(x, y)linear_kernel(x, y);
 [mu_pred_norm, var_pred_norm] = fit_gp(Xtrain_norm, ytrain_norm, Xtest_norm, noise, datanoise, kernel);
 
 % Undoing normalization
 mu_pred = (mu_pred_norm * ystd) + ymean;
-var_pred = (var_pred_norm * ystd) + ymean;
+% var_pred = (var_pred_norm * ystd) + ymean;
 
 rmse = sqrt(mean((mu_pred - ytest).^2));
 fprintf("RMSE: %.3f\n", rmse);

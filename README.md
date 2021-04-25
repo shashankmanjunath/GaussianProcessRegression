@@ -12,6 +12,8 @@ To Do:
 Performance Comparison:
 
 GP:
+  Linear Kernel:
+    Best RMSE: 4.751
   Square Exp Kernel: 
     Best Parameters: [sigma_f]: 0.010000, [l]: 10.000000
     Best RMSE: 3.586
@@ -33,6 +35,8 @@ GP:
     Test RMSE: 4.213
 
 SVM:
+  Linear Kernel:
+    Best RMSE: 4.935
   Square Exp Kernel:
     Best Parameters: [sigma_f]: 0.001000, [l]: 0.000001
     Best Train RMSE: 3.941912

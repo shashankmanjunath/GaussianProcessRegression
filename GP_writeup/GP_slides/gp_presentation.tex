@@ -70,11 +70,11 @@
     \item Some history of GPs 
     	\cite{rasmussen_gaussian_2006}
     \begin{itemize}
-      \item Blight and Ott first introducted GPs as priors over functions in 1975
+      \item Blight and Ott first introducted GPs as priors over functions in 1975\cite{kuss_gaussian_2006}
       \item Gaussian Process models were first recognized as the limit of a Bayesian neural network by Mackay (1992) and
-        Neal (1996)
+        Neal (1996)\cite{kuss_gaussian_2006}
     \end{itemize}
-    \item GPs are non-parametric models (unlike models such as Neural Networks)
+    \item GPs are non-parametric models (unlike models such as Neural Networks)\cite{bishop_pattern_2006}
     \item GPs allows us to quantify uncertainty in our predictions
     \item GPs are not advantageous in that they scale poorly to large datasets
   \end{itemize}
@@ -143,10 +143,27 @@
 \end{frame}
 
 \begin{frame}
+  \frametitle{Kernels}
+  \begin{itemize}
+    \item Gaussian processes use kernels to help project input features into alternate feature
+      spaces\cite{duvenaud_automatic_2014}
+      \begin{itemize}
+        \item We test out 6 different kernels, and use 5-fold cross validation grid search to find the best
+          hyperparameters
+      \end{itemize}
+    \item We can additionally combine simple kernels to create more complicated kernels
+    \begin{itemize}
+      \item We test out the Local Periodic Kernel, which is a combination of the Squared Exponential and Periodic
+        kernels
+    \end{itemize}
+    \item Kernel choice is up to you - you know the problem best!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
   \frametitle{A Simple Demonstration}
   \vspace*{-1cm}
   \hspace*{-2cm} \includegraphics[scale=0.5]{synthetic_data}
-  \todo{fit some GPs on sine waves or something}
 \end{frame}
 
 \begin{frame}
@@ -226,11 +243,43 @@
 
 \begin{frame}
   \frametitle{Results}
+
+  \begin{itemize}
+    \item All values presented are RMSE values
+    \item We present Regression SVM (trained with cross-validation hyperparameter search) test error values and Linear
+      Regression test error values for comparison
+    \item Linear Regression: \textbf{4.751}
+  \end{itemize}
+
+  \begin{table}
+    \centering
+    \caption{Table of Boston Housing Dataset feature names and features}
+    \resizebox{\textheight}{!}{
+      \begin{tabular}{ || m{3cm} | m{3cm} | m{3cm} | m{3cm} || }
+        \hline
+        & \textbf{Gaussian Process Regressor} & \textbf{SVM Regressor} & Linear Regression \\
+        \hline
+        Linear Kernel & \textbf{4.751} & 4.935 & \textbf{4.751} \\
+        \hline
+        Square Exp Kernel & \textbf{3.586} & 9.014 & 4.751 \\
+        \hline
+        Rational Quadratic Kernel & \textbf{3.560} & 9.013 & 4.751 \\
+        \hline
+        Periodic Kernel & 8.944 & 9.017 & \textbf{4.751} \\
+        \hline
+        Local Periodic Kernel & 5.065 & 9.014 & \textbf{4.751} \\
+        \hline
+        Polynomial Kernel & \textbf{4.213} & 80.389 & 4.751 \\
+        \hline
+      \end{tabular}
+    }
+  \end{table}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[shrink=30]
   \frametitle{References}
-  \bibliographystyle{amsalpha}
+  % \bibliographystyle{amsalpha}
+  \bibliographystyle{ieeetr}
   \bibliography{../gpr}
 
   Code for MATLAB implementation, LaTeX for presentation and paper can be found
