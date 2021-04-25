@@ -36,7 +36,7 @@ GP:
     * Best Train RMSE: 5.214246  
     * Test RMSE: 4.213  
 
-* SVM:  
+SVM:  
   * Linear Kernel:  
     * Best RMSE: 4.935  
   * Square Exp Kernel:  
@@ -60,5 +60,5 @@ GP:
     * Best Train RMSE: 164.002678  
     * Test RMSE: 80.389  
 
-* Linear Regression:  
+Linear Regression:  
   * Linear Regression Test RMSE: 4.751381  
