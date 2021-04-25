@@ -17,23 +17,12 @@ ytest_final = ytest;
 
 D_x = Xtrain;
 D_y = ytrain;
-% D_x = cat(1,Xtest,Xtrain);
-% D_y = cat(1,ytest,ytrain);
+
 N = length(D_x);
 test_idx = floor(linspace(1,N,num_splits+1));
 shuffle_idx = randperm(N);
 D_x = D_x(shuffle_idx, :);
 D_y = D_y(shuffle_idx);
-
-% just for reference
-% train_idx = [[test_idx(2):N];
-%             [1:test_idx(2)-1, test_idx(3):N];
-%             [1:test_idx(3)-1, test_idx(4):N];
-%             [1:test_idx(4)-1, test_idx(5):N];
-%             [1:test_idx(5)-1]];
-%
-
-% average_RMSE = 0;
 
 num_grid = 6;
 rmse_arr = zeros(num_grid, num_grid, num_grid, num_grid);
@@ -103,8 +92,6 @@ for i = 1 : num_splits
 end
 
 % Finding best parameters
-% rmse_arr = rmse_arr / num_splits;
-
 min_rmse = min(min(min(min(rmse_arr))));
 linear_min_idx = find(rmse_arr == min_rmse);
 

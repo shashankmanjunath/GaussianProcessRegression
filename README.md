@@ -32,3 +32,27 @@ GP:
     Best Train RMSE: 5.214246
     Test RMSE: 4.213
 
+SVM:
+  Square Exp Kernel:
+    Best Parameters: [sigma_f]: 0.001000, [l]: 0.000001
+    Best Train RMSE: 3.941912
+    Test RMSE: 9.014
+  Rational Quadratic Kernel:
+    Best Parameters: [sigma_f]: 0.100000, [l]: 0.000010, [alpha]: 0.000100
+    Best Train RMSE: 3.905346
+    Test RMSE: 9.013
+  Periodic Kernel:
+    Best Parameters: [sigma_f]: 0.398107, [l]: 0.000025, [p]: 0.000100
+    Best Train RMSE: 9.389988
+    Test RMSE: 9.017
+  Local Periodic Kernel:
+    Best Parameters: [sigma_f]: 0.398107, [l]: 10.000000, [p]: 0.001000, [alpha]: 0.000100
+    Best Train RMSE: 8.518371
+    Test RMSE: 9.014
+  Polynomial Kernel:
+    Best Parameters: [c]: 0.000000, [p]: 0.001292
+    Best Train RMSE: 164.002678
+    Test RMSE: 80.389
+
+Ridge Regression:
+
