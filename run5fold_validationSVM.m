@@ -87,8 +87,8 @@ for i = 1 : 5
                     % mdl = fitrsvm(Xtrain_norm, ytrain_norm,'KernelFunction', 'square_exp_SVM_kernel');
                     % mdl = fitrsvm(Xtrain_norm, ytrain_norm,'KernelFunction', 'rat_quad_SVM_kernel');
                     % mdl = fitrsvm(Xtrain_norm, ytrain_norm,'KernelFunction', 'polynomial_SVM_kernel');
-                    % mdl = fitrsvm(Xtrain_norm, ytrain_norm,'KernelFunction', 'periodic_SVM_kernel');
-                    mdl = fitrsvm(Xtrain_norm, ytrain_norm, 'KernelFunction', 'local_periodic_SVM_kernel');
+                    mdl = fitrsvm(Xtrain_norm, ytrain_norm,'KernelFunction', 'periodic_SVM_kernel');
+%                     mdl = fitrsvm(Xtrain_norm, ytrain_norm, 'KernelFunction', 'local_periodic_SVM_kernel');
                     yfit = predict(mdl, Xtest_norm);
 
                     % Undoing normalization

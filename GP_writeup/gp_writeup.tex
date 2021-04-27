@@ -71,9 +71,8 @@ interpretability through kernel choice and uncertainty quantification. By levera
 distributions and Bayes’s rule, we may infer a probability distribution over possible functions when fitting a dataset.
 This Bayesian framework allows flexibility through choosing a covariance function as a prior belief about the dataset,
 which can provide further insight into the trends of the training data. We implement a multi-dimensional Gaussian
-process regressor and evaluate its performance on the Boston Housing dataset, which is comparable to those in the top 25
-of the Kaggle competition. Furthermore, we perform optimization on the hyperparameters through maximum likelihood
-estimation, to remove the need for manual tuning of the hyperparameters.
+process regressor and evaluate its performance on the Boston Housing dataset, which is comparable to those in the top 10
+of the Kaggle competition. Furthermore, we perform optimization on the hyperparameters through 5-fold cross-validation.
 \end{abstract}
 
 \section{Gaussian Random Variables}
@@ -147,7 +146,6 @@ $\Phi(\bx): \R^d \rightarrow \R^n$, we can write the kernel defined by this func
 
 In order to illustrate how kernels fit into Gaussian Processes, we will 
 
-\todo{finish derivation of kernel trick in GP}
 
 We illustrate specific kernels that we used below. These kernels can additionally be combined through addition and
 multiplication of the kernels together, though we do not explore this as part of this project.
@@ -191,9 +189,13 @@ Figure~\ref{fig:periodic_kernel}
 
 
 \section{A Simple Demo}
-
-\todo{fit some GPs on sine waves or something}
-
+Here we demonstrate GP regression on sinusoidal data. The true function is represented by the black dashed line, with training points represented by the solid red dots. The orange yellow and blue curve represent samples from the distribution of possible functions, and the red dashed line represents the 95\% confidence interval.
+\begin{figure}[!hp]
+  \centering
+  \caption{Visualization of a Gaussian process.  }
+  \label{fig:synthetic_data}
+  \includegraphics[clip,keepaspectratio=true,scale=0.5]{synthetic_data}
+\end{figure}
 \section{Boston Housing Dataset}
 
 The Boston Housing Dataset, originally published in 1978 contains 506 data points, each containing 13 features and 1
@@ -255,6 +257,35 @@ feature in the training set. We additionally normalize the MEDV feature, and con
 before calculating our RMSE.
 
 \section{Results}
+We perform regression on the Boston Housing Dataset using our GP, MATLAB's built-in SVM function, and linear regression. 5-fold cross validation hyperparameter search was performed in training and the root mean squared error (RMSE) is used as our performance metric. Our results are shown in Table 2.
+
+The smallest RMSE is the GP with a rational quadratic kernel, indicating the best performance. The rational quadratic kernel is equivalent to the sum of RBF kernels with different lengthscales, for more robusticity. The poor performance of periodic and locally periodic kernels reveal that there is likely no periodic trends in the data.
+
+The results from the GP regression provide further information than SVM or linear regression through uncertainty quantification. This feature, along with incorporating prior beliefs through kernel choice gives the GP algorithm its interpretability.
+
+\begin{table}[!hp]\label{table:results}
+\centering
+\caption{Table of Boston Housing Dataset feature names and features}
+\resizebox{.7\textheight}{!}{
+  \begin{tabular}{ || m{5cm} | m{5cm} | m{5cm} | m{5cm} || }
+    \hline
+    & \textbf{Gaussian Process Regressor} & \textbf{SVM Regressor} & Linear Regression \\
+    \hline
+    Linear Kernel & \textbf{4.751} & 4.935 & \textbf{4.751} \\
+    \hline
+    Square Exp Kernel & \textbf{3.586} & 9.014 & 4.751 \\
+    \hline
+    Rational Quadratic Kernel & \textbf{3.560} & 9.013 & 4.751 \\
+    \hline
+    Periodic Kernel & 8.944 & 9.017 & \textbf{4.751} \\
+    \hline
+    Local Periodic Kernel & 5.065 & 9.014 & \textbf{4.751} \\
+    \hline
+    Polynomial Kernel & \textbf{4.213} & 80.389 & 4.751 \\
+    \hline
+  \end{tabular}
+}
+\end{table}
 \section{Figures}
 \begin{figure}[H]
   \centering
