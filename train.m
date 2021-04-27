@@ -8,10 +8,11 @@ y = sin(X_train);
 l = 1.5;
 sigma_f = 1.0;
 noise = 1e-6;
-num_preds = 3;
+num_preds = 2;
 
 num_test = 100;
 X_test = linspace(-10, 10, num_test)';
+ytest = sin(X_test)
 
 kernel = @(x, y)square_exp_kernel(x, y, l, sigma_f);
 
@@ -21,6 +22,7 @@ f_post = mvnrnd(mu_pred, var_pred, num_preds);
 
 hold on;
 
+plot(X_test, mu_pred, 'DisplayName', 'Predicted Mean')
 plot(X_test, f_post, 'DisplayName', 'Prediction');
 
 uncertainty = 2 * sqrt(diag(var_pred));
