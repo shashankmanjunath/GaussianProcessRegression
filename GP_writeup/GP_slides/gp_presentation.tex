@@ -48,7 +48,7 @@
   \frametitle{Introduction}
 
   \begin{itemize}
-    \item Gaussian processes are a class of machine learning models that allow us to easily incorporate prior
+    \item Gaussian processes (GPs) are a class of machine learning models that allow us to easily incorporate prior
       observations into our data. 
     \item Example: predicting temperatures throughout a room.
     \begin{itemize}
@@ -71,7 +71,7 @@
     \item Some history of GPs 
     	\cite{rasmussen_gaussian_2006}
     \begin{itemize}
-      \item Blight and Ott first introducted GPs as priors over functions in 1975\cite{kuss_gaussian_2006}
+      \item Blight and Ott first introduced GPs as priors over functions in 1975\cite{kuss_gaussian_2006}
       \item Gaussian Process models were first recognized as the limit of a Bayesian neural network by Mackay (1992) and
         Neal (1996)\cite{kuss_gaussian_2006}
     \end{itemize}
@@ -107,8 +107,8 @@
 \begin{frame}
   \frametitle{Gaussian Processes}
   \begin{itemize}
-    \item A Gaussian process $f(\boldsymbol{x})$ is defined as a a random process where each set of random variable in
-      the random process is has a multivariate Gaussian distribution.
+    \item A Gaussian process $f(\boldsymbol{x})$, $\bx \in \R^{n}$ is defined as a random process where each set of
+      random variable in the random process is has a multivariate Gaussian distribution.
     \item In mathematical notation, $f(\boldsymbol{x})$ is fully characterized by a mean function  $m(\boldsymbol{x})$
       and covariance function, $K(\boldsymbol{x},\boldsymbol{x'})$:
       \begin{gather*}
@@ -118,7 +118,7 @@
 
     \item The mean function $m(\bx)$ is typically defined as zero
     \item The covariance is chosen based on some prior belief about the dataset
-    \item The covariance function is analagous to a kernel function $\kappa(\cdot, \cdot)$, where each entry of the
+    \item The covariance function is analogous to a kernel function $\kappa(\cdot, \cdot)$, where each entry of the
       covariance matrix is the kernel function calculated between the corresponding points
   \end{itemize}
 \end{frame}
@@ -258,7 +258,7 @@
     \resizebox{\textheight}{!}{
       \begin{tabular}{ || m{3cm} | m{3cm} | m{3cm} | m{3cm} || }
         \hline
-        & \textbf{Gaussian Process Regressor} & \textbf{SVM Regressor} & Linear Regression \\
+        & \textbf{Gaussian Process Regressor} & \textbf{SVM Regressor} & \textbf{Linear Regression} \\
         \hline
         Linear Kernel & \textbf{4.751} & 4.935 & \textbf{4.751} \\
         \hline
@@ -277,9 +277,18 @@
   \end{table}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Conclusions}
+  \begin{itemize}
+    \item We discuss intuition and mathematics behind Gaussian Process models, as well as advantages over other classes
+      of regression models
+    \item We present Gaussian Processes for Regression with various kernels on the Boston Housing Dataset
+    \item We compare the Gaussian Process Regressor with other regression techniques on the Boston Housing Dataset
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[shrink=30]
   \frametitle{References}
-  % \bibliographystyle{amsalpha}
   \bibliographystyle{ieeetr}
   \bibliography{../gpr}
 
