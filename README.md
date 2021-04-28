@@ -5,7 +5,7 @@ jalido@bu.edu, manjuns@bu.edu
 
 Implementation of Gaussian Processes for Regression in MATLAB. Testing performed on the Boston Housing dataset. 
 
-* To train a simple Gaussian Process Regressor on this dataset, run `train_boston.m`
+* To train a simple Gaussian Process Regressor on the Boston Housing dataset, run `train_boston.m`
 * To try a Gaussian Process Regressor on some toy data, run `train.m`
 * Compile our writeup and slides using `latex`. Files can be found under `GP_writeup`
 

@@ -32,7 +32,9 @@
 \usepackage{xcolor}         % to do macro
 
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
 \newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\by}{\boldsymbol{y}}
 \newcommand{\todo}[1]{\textcolor{red}{#1}}
 
 \graphicspath{ {./figures/} }
@@ -73,6 +75,8 @@ This Bayesian framework allows flexibility through choosing a covariance functio
 which can provide further insight into the trends of the training data. We implement a multi-dimensional Gaussian
 process regressor and evaluate its performance on the Boston Housing dataset, which is comparable to those in the top 10
 of the Kaggle competition. Furthermore, we perform optimization on the hyperparameters through 5-fold cross-validation.
+We provide a MATLAB implementation of Gaussian Processes for Regression at
+\href{ihttps://github.com/shashankmanjunath/GaussianProcessRegression}{https://github.com/shashankmanjunath/GaussianProcessRegression}.
 \end{abstract}
 
 \section{Gaussian Random Variables}
@@ -100,38 +104,44 @@ probability distribution fully characterized by a mean vector and a covariance m
 \]
 
 where $\boldsymbol{\mu}$ is the mean vector, and $\Sigma$ is the covariance matrix whose entries describe the covariance
-between each pair of random variables.
+between each pair of random variables. Multivariate Gaussian random variables form the foundation for Gaussian
+processes, by characterizing the functions drawn from the Gaussian process.
 
 \section{Gaussian Process}
 
 A random process is essentially a collection of random variables jointly characterized  as a set or vector of random
-variables with a multivariate joint probability distribution. A Gaussian process $f(\boldsymbol{x})$ is defined as a a
+variables with a multivariate joint probability distribution. A Gaussian process $f(\boldsymbol{x})$ is defined as a
 random process where each set of random variable in the random process is has a multivariate Gaussian distribution.
-$f(\boldsymbol{x})$ is fully characterized by a mean function  $m(\boldsymbol{x})$ and covariance function,
-$K(\boldsymbol{x},\boldsymbol{x'})$:
-
-\[
-  f(\boldsymbol{x})\sim\mathcal{GP}(m(\boldsymbol{x}),K(\boldsymbol{x},\boldsymbol{x'}))
-\]
-
-Typically, the mean function is zero. The kernel for the covariance is chosen based on some prior belief about the
-dataset; more on kernels is discussed in \ref{subsection:kernels}.
-
-\section{Regression}
-
-Suppose we observe training data $\boldsymbol{t}$ and choose kernel $\kappa$. Then the mean and covariance functions are
-given by 
+$f(\bx)$ is fully characterized by a mean function  $m(\bx)$ and covariance function,
+$K(\bx,\bx')$:
 
 \begin{gather*}
-  m(\boldsymbol{x})=C_{\boldsymbol{x}\boldsymbol{t}}^\top C_{\boldsymbol{t}}^{-1}\boldsymbol{t} \\
-  K(\boldsymbol{x},\boldsymbol{x'})=C_{\boldsymbol{x}\boldsymbol{x'}}-C_{\boldsymbol{x}\boldsymbol{t}}^\top
-  C_{\boldsymbol{t}}^{-1}C_{\boldsymbol{x}\boldsymbol{t}}
+  f(\boldsymbol{x})\sim\mathcal{GP}(m(\bx),K(\bx, \bx')) \\
+  K(\bx, \bx') = \E[(f(\bx) - m(\bx))(f(\bx') - m(\bx'))]
 \end{gather*}
 
-where $C_{\boldsymbol{x}\boldsymbol{t}} = \kappa(\boldsymbol{x},\boldsymbol{t})$, $C_{\boldsymbol{t}} =
-\kappa(\boldsymbol{t},\boldsymbol{t})$, and $C_{\boldsymbol{x}\boldsymbol{x'}} =
-\kappa(\boldsymbol{x},\boldsymbol{x'})$.  Those interested in the derivation of the results are encouraged to consult
-section 6.4.2 of \cite{bishop_pattern_2006}.
+Typically, the mean function is assumed to be zero. The kernel for the covariance is chosen based on some prior belief
+about the dataset; more on kernels is discussed in \ref{subsection:kernels}. In a Gaussian process, we assume that any
+new observed points follow the same multivariate normal observed in our training data. GP's are non-parametric models,
+unlike models such as standard linear regressors or neural networks, since they do not have "weights" in the sense that
+a linear regressor or neural network has weights\cite{bishop_pattern_2006}. Rather, a GP is characterized by a mean and
+covariance function, from which predicted can be drawn\cite{kuss_gaussian_2006}. While we have defined a Gaussian
+process, we now aim to create a scheme under which to perform regression.
+
+\section{Regression} \label{section:regression}
+
+Suppose we observe training data $\bx \in \R^{n \times d}$, training labels $\by \in \R^{n}$, testing data $\bx' \in
+\R^{m \times d}$ and choose kernel $\kappa$, and choose noise parameter $\sigma_{n}^{2} \in \R$. Then the mean and
+covariance functions are given by 
+
+\begin{gather*}
+  m(\bx) = \kappa(\bx, \bx')^\top (\kappa(\bx, \bx) + \sigma_{n}^{2}I_{n})^{-1} \by \\
+  K(\bx, \bx') = \kappa(\bx', \bx') - \kappa(\bx, \bx')^{\top} (\kappa(\bx, \bx) + \sigma_{n}^{2} I_{n})^{-1}
+  \kappa(\bx, \bx')
+\end{gather*}
+
+where $I_{n}$ indicates the identity matrix. Those interested in a thorough derivation of the results are encouraged to
+consult Chapter 2 of \cite{rasmussen_gaussian_2006}.
 
 \subsection{Kernels} \label{subsection:kernels}
 
@@ -145,9 +155,10 @@ $\Phi(\bx): \R^d \rightarrow \R^n$, we can write the kernel defined by this func
 \]
 
 We illustrate specific kernels that we used below. These kernels can additionally be combined through addition and
-multiplication of the kernels together, though we do not explore this as part of this project.
+multiplication of the kernels together, though we do not explore this as part of this project. The kernel must be chosen
+prior to fitting the GP, and is typically chosen based on the specific modelling problem at hand.
 
-\subsubsection{Radial Basis Function (RBF) Kernel}
+\subsubsection{Radial Basis Function (RBF) Kernel/Square Exponential Kernel}
 
 The Radial Basis Function (RBF) Kernel, also known as the Squared Exponential Kernel, is given by:
 
@@ -158,6 +169,13 @@ The Radial Basis Function (RBF) Kernel, also known as the Squared Exponential Ke
 This kernel is parametrized by two parameters, the lengthscale $\ell$ and the variance $\sigma^2$. The lengthscale
 determines the width of the kernel, and the variance scales the kernel\cite{duvenaud_automatic_2014}. We provide an
 images of the RBF Kernel with various lengthscales and variances in Figure~\ref{fig:square_exp_kernel}
+
+\begin{figure}[H]
+  \centering
+  \caption{Graph of a square exponential kernel/RBF kernel for various lengthscales and variances}
+  \label{fig:square_exp_kernel}
+  \includegraphics[trim={0 7cm 0 7cm},clip,width=\textwidth]{square_exp_kernel}
+\end{figure}
 
 \subsubsection{Rational Quadratic Kernel}
 
@@ -172,27 +190,78 @@ This kernel is parametrized by three parameters, the lengthscale $\ell$, the var
 weighting parameter $\alpha$\cite{duvenaud_automatic_2014}. We provide images of the Rational Quadratic Kernel with
 various $\alpha$ values in Figure~\ref{fig:rqk}
 
+\pagebreak
+
+\begin{figure}[H]
+  \centering
+  \caption{Graph of a rational quadratic kernel for $\sigma = 1$, $\ell = 1$, and various $\alpha$ values}
+  \label{fig:rqk}
+  \includegraphics[trim={0 7.5cm 0 7cm},clip,scale=0.6]{rqk}
+\end{figure}
+
 \subsubsection{Periodic Kernel}
 
-The periodic kernel allows us to model periodic functions. The kernel is given by:
+The periodic kernel allows us to model periodic functions. It is given by: 
 
 \[
-  \kappa_{P}(\bx, \bx') = \sigma^{2}  \exp(- \frac{2 \sin^{2}(\pi \|\bx - \bx'\|)}{p \ell^{2}})
+  \kappa_{P}(\bx, \bx') = \sigma^{2} \exp\left(- \frac{2 \sin^{2}(\pi \|\bx - \bx'\|)}{p \ell^{2}}\right)
 \]
 
-This kernel is parametrized by two parameters, $p$ which describes the period of the function, and $\ell$ which is the
-lengthscale\cite{duvenaud_automatic_2014}. We provide images of the Periodic Kernel with various $p$ values in
-Figure~\ref{fig:periodic_kernel}
+This kernel parametrized by two parameters, $p$ which describes the period of the function, and $\ell$ which is the
+lengthscale\cite{duvenaud_automatic_2014}.  We provide images of the Periodic Kernel with various $p$ values in
+Figure~\ref{fig:periodic_kernel}.
+
+\begin{figure}[H]
+  \centering
+  \caption{Graph of a rational quadratic kernel for $\sigma = 1$, $\ell = 1$, and various $p$ values}
+  \label{fig:periodic_kernel}
+  \includegraphics[trim={0 7.5cm 0 7cm},clip,keepaspectratio=true,scale=0.6]{periodic_kernel}
+\end{figure}
+
+\subsubsection{Other Kernels}
+
+We additionally test other kernels, including the Linear Kernel, Local Periodic Kernel, and the Polynomial Kernel. The
+Linear kernel has no hyperparameters, and is given by:
+
+\[
+  \kappa(\bx, \bx') = \langle \bx, \bx' \rangle
+\]
+
+The polynomial kernel has hyperparameters $c$, which controls the zero crossing of the kernel, and $d$ which controls the
+order of the polynomial. This kernel is given by:
+
+\[
+  \kappa(\bx, \bx') = (\bx^{\top}\bx' + )^{d}
+\]
+
+We additionally test one kernel which is a combination of two kernels already discusses, the Local Periodic Kernel.
+This kernel is the product of a periodic kernel and a square exponential kernel, and is given by:
+
+\[
+  \kappa(\bx, \bx') = \sigma^2 \exp\left( - \frac{\|\bx -\bx' \|_{2}^{2}}{2 \ell^2} \right)  \exp(-
+  \frac{2 \sin^{2}(\pi \|\bx - \bx'\|)}{p \ell_{p}^{2}})
+\]
+
+This kernel is parametrized by $\sigma^{2}$, the overall variance, $\ell_p$, the lengthscale of the periodic function,
+$p$, the period of the periodic function, and $\ell$, the lengthscale of the square exponential kernel.
 
 
 \section{A Simple Demo}
-Here we demonstrate GP regression on sinusoidal data. The true function is represented by the black dashed line, with training points represented by the solid red dots. The orange yellow and blue curve represent samples from the distribution of possible functions, and the red dashed line represents the 95\% confidence interval.
-\begin{figure}[!hp]
+Here we demonstrate GP regression on sinusoidal data fit using a square exponential kernel with lengthscale $\ell =
+1.5$, and variance $\sigma^{2} = 1.0$. The true function is represented by the black dashed line, with training points
+represented by the solid red dots. The orange yellow and blue curve represent samples from the distribution of possible
+functions, and the red dashed line represents the 95\% confidence interval.
+
+\begin{figure}[H]
   \centering
-  \caption{Visualization of a Gaussian process.  }
   \label{fig:synthetic_data}
-  \includegraphics[clip,keepaspectratio=true,scale=0.5]{synthetic_data}
+  \includegraphics[trim={0cm, 4cm, 0cm, 3cm},clip,scale=0.5]{synthetic_data}
+  \caption{Visualization of a Gaussian process. The dashed black line is the synthetic function (a sinusoid), not
+  provided to the GP. We provide the red training points, and fit the GP as described in Section
+\ref{section:regression}. We then draw three example functions (blue, red, and yellow solid lines) from the GP, as well
+as calculate the bounds for the 95\% confidence intervals (dashed red lines)}
 \end{figure}
+
 \section{Boston Housing Dataset}
 
 The Boston Housing Dataset, originally published in 1978 contains 506 data points, each containing 13 features and 1
@@ -254,19 +323,35 @@ feature in the training set. We additionally normalize the MEDV feature, and con
 before calculating our RMSE.
 
 \section{Results}
-We perform regression on the Boston Housing Dataset using our GP, MATLAB's built-in SVM function, and linear regression. 5-fold cross validation hyperparameter search was performed in training and the root mean squared error (RMSE) is used as our performance metric. Our results are shown in Table 2.
 
-The smallest RMSE is the GP with a rational quadratic kernel, indicating the best performance. The rational quadratic kernel is equivalent to the sum of RBF kernels with different lengthscales, for more robusticity. The poor performance of periodic and locally periodic kernels reveal that there is likely no periodic trends in the data.
+We perform regression on the Boston Housing Dataset using our own GP implementation formulated as described in Section
+\ref{section:regression}, MATLAB's built-in SVM Regressor function, and our own implementation of linear regression.
+5-fold cross validation hyperparameter search was performed in training and the root mean squared error (RMSE) is used
+as our performance metric. More specifically, we calculate the RMSE using the following formula:
 
-The results from the GP regression provide further information than SVM or linear regression through uncertainty quantification. This feature, along with incorporating prior beliefs through kernel choice gives the GP algorithm its interpretability.
+\[
+  RMSE = \sqrt{\frac{\sum\limits_{i=1}^{N} (y_i - \hat y_i)^{2}}{N}}
+\]
 
-\begin{table}[!hp]\label{table:results}
-\centering
+where $y_i$ is the true value, $\hat y_i$ is the predicted mean value of our GP, and $N$ is the number of samples. Our
+results are shown in Table 2.
+
+The smallest RMSE is the GP with a rational quadratic kernel, indicating the best performance. The rational quadratic
+kernel is equivalent to the sum of RBF kernels with different lengthscales, for increased robustness. The poor
+performance of periodic and locally periodic kernels reveal that there is likely no periodic trends in the data.
+
+The results from the GP regression provide further information than SVM or linear regression through uncertainty
+quantification. This feature, along with incorporating prior beliefs through kernel choice gives the GP algorithm its
+interpretability.
+
+\begin{table}[H]\label{table:results}
 \caption{Table of Boston Housing Dataset feature names and features}
 \resizebox{.7\textheight}{!}{
-  \begin{tabular}{ || m{5cm} | m{5cm} | m{5cm} | m{5cm} || }
+  {
+  \centering
+  \begin{tabular}{ || m{3cm} | m{3cm} | m{3cm} | m{3cm} || }
     \hline
-    & \textbf{Gaussian Process Regressor} & \textbf{SVM Regressor} & Linear Regression \\
+    & \textbf{Gaussian Process Regressor} & \textbf{SVM Regressor} & \textbf{Linear Regression} \\
     \hline
     Linear Kernel & \textbf{4.751} & 4.935 & \textbf{4.751} \\
     \hline
@@ -281,29 +366,17 @@ The results from the GP regression provide further information than SVM or linea
     Polynomial Kernel & \textbf{4.213} & 80.389 & 4.751 \\
     \hline
   \end{tabular}
+  }
 }
 \end{table}
-\section{Figures}
-\begin{figure}[H]
-  \centering
-  \caption{Graph of a square exponential kernel for various lengthscales and variances}
-  \label{fig:square_exp_kernel}
-  \includegraphics[trim={0 7cm 0 7cm},clip,keepaspectratio=true,scale=0.5]{square_exp_kernel}
-\end{figure}
-\begin{figure}[H]
-  \centering
-  \caption{Graph of a rational quadratic kernel for $\sigma = 1$, $\ell = 1$, and various $\alpha$ values}
-  \label{fig:rqk}
-  \includegraphics[trim={0 7cm 0 7cm},clip,keepaspectratio=true,scale=0.5]{rqk}
-\end{figure}
-\begin{figure}[H]
-  \centering
-  \caption{Graph of a rational quadratic kernel for $\sigma = 1$, $\ell = 1$, and various $p$ values}
-  \label{fig:periodic_kernel}
-  \includegraphics[trim={0 7cm 0 7cm},clip,keepaspectratio=true,scale=0.5]{periodic_kernel}
-\end{figure}
 
-\section{References}
+\section{Conclusions}
+
+In this writeup, we provided a brief introduction to Gaussian Processes, discussed algorithms to fit GPs for regression,
+provided a simple demo, and tested out GPs with various kernels on the Boston Housing dataset, showing good algorithm
+performance. We additionally provide our implementation in MATLAB at
+\href{https://github.com/shashankmanjunath/GaussianProcessRegression}{https://github.com/shashankmanjunath/GaussianProcessRegression}.
+
 \bibliographystyle{plain}
 \bibliography{gpr}
 

@@ -19,6 +19,7 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\by}{\boldsymbol{y}}
 \newcommand{\todo}[1]{\textcolor{red}{#1}}
 
 \graphicspath{ {../figures/} }
@@ -128,11 +129,11 @@
   \begin{itemize}
     \item While we have defined a Gaussian process, we now describe how to fit a Gaussian process (predictive
       distribution) given a training set (prior distribution) and test points
-    \item Suppose we observe training data $\bx$, test data $\bx'$, and choose kernel $\kappa$. Then the mean and
-      covariance functions are given by 
+    \item Suppose we observe training data $\bx$, training labels $\by$, test data $\bx'$, and choose kernel $\kappa$.
+      Then the mean and covariance functions are given by 
 
       \begin{gather*}
-        m(\boldsymbol{x})=\kappa(\bx, \bx')^\top \left(\kappa(\bx, \bx) + \sigma_{n}^{2} I\right)^{-1}\bx \\
+        m(\boldsymbol{x})=\kappa(\bx, \bx')^\top \left(\kappa(\bx, \bx) + \sigma_{n}^{2} I\right)^{-1} \by \\
         K(\boldsymbol{x},\boldsymbol{x'}) = \kappa(\bx', \bx') - \kappa(\bx, \bx')^{\top}\left(\kappa(\bx, \bx) +
         \sigma_{n}^{2}I\right)^{-1}\kappa(\bx, \bx')
       \end{gather*}
